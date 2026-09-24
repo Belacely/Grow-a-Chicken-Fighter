@@ -3,1113 +3,1372 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Grow A Chicken Fighter - Ability Codex</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <title>Grow A Chicken Fighter - Ability Index & Building Team</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #020205;
-      --card-bg: rgba(8, 12, 22, 0.85);
-      --card-border: rgba(0, 240, 255, 0.25);
-      --neon-cyan: #00f0ff;
-      --neon-pink: #ff0055;
-      --neon-purple: #a855f7;
-      --neon-glow: rgba(0, 240, 255, 0.5);
-      --text-primary: #f1f5f9;
-      --text-secondary: #94a3b8;
-      --text-muted: #475569;
-      --rooster-amber: #ffb020;
-      --rooster-red: #ff5b2e;
-      --mouse-x: 50%;
-      --mouse-y: 50%;
+      --bg-primary: #8C3A32;
+      --bg-secondary: #52201B;
+      --card-bg: #F5EAD9;
+      --card-border: #4A3525;
+      --card-border-glow: #D4A574;
+      --text-dark: #2C1D11;
+      --text-muted: #6E5B4C;
+      --accent-gold: #FFD573;
+      --accent-warm: #E0A96D;
+      
+      /* Role Colors */
+      --role-offense: #D32F2F;
+      --role-control: #7B1FA2;
+      --role-defense: #1976D2;
+      --role-support: #2E7D32;
+      --role-utility: #E65100;
+
+      --stat-hp: #2E7D32;
+      --stat-atk: #C62828;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: var(--bg-dark);
-      background-image: 
-        radial-gradient(1000px circle at var(--mouse-x) var(--mouse-y), rgba(0, 240, 255, 0.12), transparent 70%),
-        radial-gradient(800px circle at calc(100% - var(--mouse-x)) calc(100% - var(--mouse-y)), rgba(255, 0, 85, 0.08), transparent 70%),
-        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+      background: radial-gradient(circle at top center, #A3483E 0%, var(--bg-primary) 50%, var(--bg-secondary) 100%);
       background-attachment: fixed;
-      color: var(--text-primary);
-      font-family: 'Rajdhani', system-ui, -apple-system, sans-serif;
+      color: var(--text-dark);
+      font-family: 'Roboto', sans-serif;
       min-height: 100vh;
       padding-bottom: 3rem;
-      overflow-x: hidden;
-      position: relative;
     }
 
-    /* Ambient Glowing Grid Overlay — cyberpunk base, warmed with a bit of
-       barnyard-fire amber/red so it reads as "this chicken means business"
-       and not a generic hacker terminal */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background:
-        radial-gradient(circle at 50% 30%, rgba(168, 85, 247, 0.08), transparent 60%),
-        radial-gradient(circle at 12% 88%, rgba(255, 176, 32, 0.09), transparent 55%),
-        radial-gradient(circle at 88% 92%, rgba(255, 91, 46, 0.07), transparent 55%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .codex-wrapper {
-      max-width: 1320px;
+    .container {
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 2rem 1.5rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Cyber Glass Panel */
-    .glass-panel {
-      background: var(--card-bg);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0, 240, 255, 0.05);
-      position: relative;
-    }
-
-    /* Header Banner */
-    .header-banner {
-      position: relative;
-      padding: 3rem 1.5rem;
-      margin-bottom: 2rem;
-      overflow: hidden;
-      text-align: center;
-      border-radius: 24px;
-      background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.18) 0%, rgba(168, 85, 247, 0.1) 40%, rgba(2, 3, 8, 0.95) 85%);
-      border: 1px solid rgba(0, 240, 255, 0.4);
-      box-shadow: 0 0 50px rgba(0, 240, 255, 0.25), inset 0 0 30px rgba(255, 0, 85, 0.1);
-    }
-
-    .header-banner::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%; width: 200%; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-pink), transparent);
-      animation: scanline 4s linear infinite;
-    }
-
-    @keyframes scanline {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(50%); }
-    }
-
-    .sub-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 12px;
-      letter-spacing: 5px;
-      color: var(--neon-cyan);
-      font-weight: 700;
-      text-transform: uppercase;
-      text-shadow: 0 0 10px var(--neon-glow);
-    }
-
-    .title-glow {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 46px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      margin: 10px 0;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, #ffffff 30%, var(--neon-cyan) 70%, var(--neon-pink) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.5));
-    }
-
-    .subtitle-desc {
-      font-size: 16px;
-      color: var(--text-secondary);
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    .tagline {
-      margin-top: 10px;
-      font-size: 13px;
-      font-style: italic;
-      font-weight: 600;
-      color: var(--rooster-amber);
-      opacity: 0.85;
-      letter-spacing: 0.3px;
-    }
-
-    /* Controls Section */
-    .controls-panel {
       padding: 1.5rem;
-      margin-bottom: 1.5rem;
     }
 
-    .search-wrapper {
-      position: relative;
-      margin-bottom: 1.25rem;
-    }
-
-    .search-wrapper::after {
-      content: '⚡';
-      position: absolute;
-      right: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 18px;
-      opacity: 0.8;
-      text-shadow: 0 0 8px var(--neon-cyan);
-    }
-
-    .search-box {
-      width: 100%;
-      padding: 16px 48px 16px 20px;
-      background: rgba(4, 6, 12, 0.85);
-      border: 1px solid rgba(0, 240, 255, 0.25);
-      border-radius: 12px;
-      color: #fff;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 17px;
-      font-weight: 600;
-      outline: none;
-      transition: all 0.3s ease;
-    }
-
-    .search-box:focus {
-      border-color: var(--neon-cyan);
-      box-shadow: 0 0 25px var(--neon-glow);
-      background: rgba(10, 16, 30, 0.95);
-    }
-
-    .filter-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .filter-row:last-child {
-      margin-bottom: 0;
-    }
-
-    .filter-label {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      width: 55px;
-    }
-
-    .chip-group {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .chip-btn {
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      cursor: pointer;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      color: var(--text-secondary);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      text-transform: uppercase;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .chip-btn:hover {
-      background: rgba(0, 240, 255, 0.15);
-      border-color: var(--neon-cyan);
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
-    }
-
-    /* Cards Grid — fixed to 4 columns so pagination reads as 2 clean rows of 8 */
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 25px;
-      padding: 30px 0;
-      position: relative;
-    }
-
-    @media (max-width: 1100px) {
-      .cards-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 620px) {
-      .cards-grid { grid-template-columns: 1fr; }
-    }
-
-    .grid-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-bottom: 4px;
-    }
-
-    .ability-card {
-      background: rgba(8, 12, 22, 0.92);
-      border: 1px solid rgba(0, 240, 255, 0.15);
+    /* Header */
+    .header {
+      text-align: center;
+      background: rgba(44, 29, 17, 0.45);
+      border: 3px solid rgba(212, 165, 116, 0.4);
       border-radius: 16px;
-      padding: 1.4rem;
+      padding: 2.2rem 1rem;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15);
       position: relative;
       overflow: hidden;
-      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), 
-                  box-shadow 0.25s ease, 
-                  border-color 0.25s ease,
-                  opacity 0.25s ease,
-                  filter 0.25s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      cursor: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2234%22%20height%3D%2234%22%3E%3Ctext%20x%3D%220%22%20y%3D%2227%22%20font-size%3D%2227%22%3E%F0%9F%90%93%3C%2Ftext%3E%3C%2Fsvg%3E") 4 4, pointer;
-      transform-origin: center center;
-      z-index: 1;
-      backdrop-filter: blur(10px);
     }
 
-    .ability-card::after {
+    .header::after {
       content: '';
       position: absolute;
-      top: 0; left: -100%; width: 100%; height: 3px;
-      background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-pink), transparent);
-      transition: left 0.5s ease;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
     }
 
-    /* Comparison-friendly card interaction: no zoom, no layout jumping. */
-    .ability-card {
-      cursor: pointer;
-    }
-
-    .ability-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(0, 240, 255, 0.55);
-      box-shadow: 0 0 22px rgba(0, 240, 255, 0.18), 0 12px 30px rgba(0, 0, 0, 0.45);
-      background: rgba(10, 16, 28, 0.98);
-      z-index: 5;
-    }
-
-    .ability-card:hover::after {
-      left: 100%;
-    }
-
-    .ability-card.compare-selected {
-      border-color: var(--rooster-amber);
-      box-shadow: 0 0 0 1px rgba(255,176,32,.35), 0 0 28px rgba(255,176,32,.22);
-    }
-
-    .ability-card.compare-selected::before {
-      content: 'COMPARE';
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 3;
-      padding: 4px 7px;
-      border-radius: 5px;
-      font: 700 8px/1 'Orbitron', sans-serif;
-      letter-spacing: 1px;
-      color: #111827;
-      background: var(--rooster-amber);
-      box-shadow: 0 0 14px rgba(255,176,32,.55);
-    }
-
-    .compare-drawer {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: min(440px, 92vw);
-      height: 100vh;
-      padding: 22px;
-      box-sizing: border-box;
-      background: rgba(5, 8, 18, .96);
-      border-left: 1px solid rgba(0,240,255,.28);
-      box-shadow: -20px 0 70px rgba(0,0,0,.55), -5px 0 30px rgba(0,240,255,.08);
-      backdrop-filter: blur(18px);
-      z-index: 2000;
-      transform: translateX(105%);
-      transition: transform .3s cubic-bezier(.16,1,.3,1);
-      overflow-y: auto;
-    }
-
-    .compare-drawer.open { transform: translateX(0); }
-
-    .compare-head {
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      margin-bottom:18px;
-    }
-    .compare-title {
-      font: 800 16px/1 'Orbitron', sans-serif;
-      letter-spacing: 1.5px; color:#fff;
-      text-shadow: 0 0 15px rgba(0,240,255,.55);
-    }
-    .compare-close {
-      border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04);
-      color:#94a3b8; border-radius:8px; padding:7px 10px; cursor:pointer;
-    }
-    .compare-close:hover { color:#fff; border-color:var(--neon-cyan); }
-
-    .compare-hint {
-      color:#64748b; font-size:11px; margin:-8px 0 16px; line-height:1.5;
-    }
-
-    .compare-slots {
-      display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px;
-    }
-    .compare-slot {
-      min-height:92px; padding:12px; border:1px dashed rgba(0,240,255,.22);
-      border-radius:10px; background:rgba(0,240,255,.025); position:relative;
-    }
-    .compare-slot.filled { border-style:solid; border-color:rgba(255,176,32,.45); }
-    .slot-label { font:700 8px 'Orbitron',sans-serif; letter-spacing:1px; color:#64748b; }
-    .slot-name { margin-top:8px; color:#fff; font:700 12px 'Orbitron',sans-serif; line-height:1.35; }
-    .slot-remove {
-      position:absolute; right:7px; top:7px; width:22px; height:22px;
-      border:0; border-radius:50%; background:rgba(239,68,68,.12); color:#f87171; cursor:pointer;
-    }
-
-    .compare-table { width:100%; border-collapse:collapse; font-size:11px; }
-    .compare-table th, .compare-table td {
-      border-bottom:1px solid rgba(255,255,255,.07); padding:10px 7px; vertical-align:top; text-align:left;
-    }
-    .compare-table th { color:#00f0ff; font:700 9px 'Orbitron',sans-serif; letter-spacing:1px; width:25%; }
-    .compare-table td { color:#b6c2d1; line-height:1.5; }
-    .compare-table .ability-col { color:#fff; font-weight:700; }
-    .compare-empty {
-      padding:22px 10px; text-align:center; color:#64748b; font-size:11px;
-      border:1px dashed rgba(255,255,255,.1); border-radius:10px;
-    }
-
-    .compare-float {
-      position:fixed; right:20px; bottom:20px; z-index:1900;
-      display:flex; align-items:center; gap:8px; padding:10px 14px;
-      border:1px solid rgba(0,240,255,.35); border-radius:999px;
-      background:rgba(5,10,20,.9); color:#fff; cursor:pointer;
-      box-shadow:0 0 22px rgba(0,240,255,.15); backdrop-filter:blur(12px);
-      font:700 10px 'Orbitron',sans-serif; letter-spacing:1px;
-    }
-    .compare-float .compare-count {
-      display:grid; place-items:center; min-width:20px; height:20px; border-radius:50%;
-      background:var(--neon-cyan); color:#061018;
-    }
-    .compare-float.has-items { border-color:var(--rooster-amber); box-shadow:0 0 28px rgba(255,176,32,.2); }
-
-    .compare-toast {
-      position:fixed; left:50%; bottom:28px; transform:translate(-50%, 20px); z-index:3000;
-      padding:10px 15px; border:1px solid rgba(255,176,32,.35); border-radius:9px;
-      background:rgba(8,12,22,.96); color:#e2e8f0; font-size:11px; opacity:0; pointer-events:none;
-      transition:.22s ease; box-shadow:0 0 25px rgba(0,0,0,.45);
-    }
-    .compare-toast.show { opacity:1; transform:translate(-50%,0); }
-
-    @media (max-width:620px) {
-      .compare-drawer { width:100vw; padding:16px; }
-      .compare-slots { grid-template-columns:1fr; }
-      .compare-float { right:12px; bottom:12px; }
-    }
-
-    @keyframes cardIn {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .ability-card.card-enter {
-      animation: cardIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    .card-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: #fff;
+    .header h1 {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 3rem;
+      color: #FFF;
       letter-spacing: 0.5px;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      margin-bottom: 0.2rem;
     }
 
-    .card-subtitle {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-top: 3px;
-      font-weight: 600;
-    }
-
-    .type-indicator {
-      font-weight: 700;
-      text-shadow: 0 0 8px currentColor;
-    }
-
-    .badge-role {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1px;
+    .header .subtitle {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.5rem;
+      color: var(--accent-gold);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.5);
       text-transform: uppercase;
-      padding: 5px 10px;
-      border-radius: 6px;
-      white-space: nowrap;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      letter-spacing: 1.5px;
+      margin-bottom: 0.4rem;
     }
 
-    .card-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin: 12px 0 8px;
-      line-height: 1.5;
-      font-weight: 500;
-    }
-
-    .card-breakdown {
-      font-size: 12px;
-      color: var(--neon-cyan);
-      opacity: 0.75;
-      margin: 0 0 16px;
-      line-height: 1.4;
+    .header .author {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.95rem;
+      color: #FFE8A3;
       font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .header p.tagline {
+      color: #F4E8D8;
+      font-weight: 400;
+      font-size: 1.05rem;
       font-style: italic;
-      border-left: 2px solid rgba(0, 240, 255, 0.35);
-      padding-left: 8px;
+      opacity: 0.95;
     }
 
-    .stat-tag {
-      display: inline-flex;
+    /* Team Builder / Sticky Dock */
+    .team-dock {
+      position: sticky;
+      top: 15px;
+      z-index: 999;
+      background: #3A1B17;
+      border: 3px solid var(--accent-gold);
+      border-radius: 14px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.5);
+      display: flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(0, 240, 255, 0.08);
-      border: 1px solid rgba(0, 240, 255, 0.3);
-      padding: 5px 12px;
-      border-radius: 8px;
-      color: var(--neon-cyan);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: #FFF;
     }
 
-    .card-effects {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin: 0;
-      line-height: 1.45;
-      border-top: 1px dashed rgba(255, 255, 255, 0.12);
-      padding-top: 10px;
-      font-weight: 500;
-    }
-
-    .count-status {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--neon-cyan);
-      margin: 0;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      opacity: 0.9;
-      text-shadow: 0 0 10px var(--neon-glow);
-      white-space: nowrap;
-    }
-
-    /* Pagination */
-    .pagination-bar {
+    .team-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.2rem;
+      color: var(--accent-gold);
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    .team-slots {
+      display: flex;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
-    .pagination-bar.bottom {
-      justify-content: center;
-      margin: 34px 0 12px;
+    .team-slot {
+      background: rgba(0,0,0,0.3);
+      border: 2px dashed rgba(212, 165, 116, 0.5);
+      border-radius: 10px;
+      padding: 8px 14px;
+      min-width: 160px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.88rem;
+      color: #D2C4B5;
     }
 
-    .page-btn, .page-nav-btn {
-      min-width: 38px;
-      height: 38px;
-      padding: 0 14px;
-      border-radius: 8px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+    .team-slot.filled {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      color: var(--text-dark);
+    }
+
+    .slot-remove {
+      background: #C62828;
+      color: #FFF;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 0.75rem;
+      font-weight: bold;
       cursor: pointer;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: var(--text-secondary);
-      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 8px;
     }
 
-    .page-btn:hover, .page-nav-btn:hover:not(:disabled) {
-      border-color: var(--neon-cyan);
-      color: #fff;
-      box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+    .team-actions {
+      display: flex;
+      gap: 10px;
     }
 
-    .page-btn.active {
-      background: var(--neon-cyan);
-      color: #020205;
-      border-color: var(--neon-cyan);
-      box-shadow: 0 0 18px var(--neon-glow);
+    .btn-team-action {
+      padding: 8px 16px;
+      border: 2px solid var(--card-border);
+      border-radius: 8px;
+      background: var(--accent-gold);
+      color: var(--text-dark);
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .page-nav-btn:disabled {
-      opacity: 0.3;
+    .btn-team-action:hover:not(:disabled) {
+      background: #FFF;
+      transform: translateY(-2px);
+    }
+
+    .btn-team-action:disabled {
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
-    .page-ellipsis {
-      color: var(--text-muted);
-      padding: 0 2px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 12px;
+    .btn-clear {
+      background: #E8D9C5;
     }
 
-    #particle-canvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      pointer-events: none;
-      z-index: 99;
-    }
-  
-    /* Enhanced Codex Effects */
-    .header-banner {
-      isolation: isolate;
+    /* Controls & Filters */
+    .controls {
+      background: var(--card-bg);
+      border: 3px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
     }
 
-    .header-banner::after {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      background:
-        linear-gradient(90deg, transparent 0%, rgba(0,240,255,.8) 25%, transparent 45%, rgba(168,85,247,.8) 65%, transparent 85%);
-      background-size: 220% 100%;
-      animation: borderFlow 6s linear infinite;
-      filter: blur(10px);
-      opacity: .45;
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    @keyframes borderFlow {
-      from { background-position: 0% 50%; }
-      to   { background-position: 220% 50%; }
-    }
-
-    .title-glow {
+    .search-bar-wrapper {
       position: relative;
-      animation: titlePulse 3.5s ease-in-out infinite;
+      margin-bottom: 1rem;
     }
 
-    .title-glow::after {
-      content: '✦';
-      display: inline-block;
-      font-size: .42em;
-      margin-left: 14px;
-      vertical-align: middle;
-      color: #fff;
-      text-shadow: 0 0 16px #00f0ff, 0 0 30px #a855f7;
-      animation: sparkle 1.8s ease-in-out infinite;
+    .search-bar {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 1.05rem;
+      border: 2px solid var(--card-border);
+      border-radius: 10px;
+      outline: none;
+      font-family: inherit;
+      background: #FFF;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
-    @keyframes titlePulse {
-      0%,100% { filter: drop-shadow(0 0 16px rgba(0,240,255,.45)); transform: translateY(0); }
-      50% { filter: drop-shadow(0 0 30px rgba(0,240,255,.8)) drop-shadow(0 0 42px rgba(168,85,247,.35)); transform: translateY(-2px); }
+    .search-bar:focus {
+      border-color: #8C3A32;
+      box-shadow: 0 0 0 3px rgba(140, 58, 50, 0.2);
     }
 
-    @keyframes sparkle {
-      0%,100% { transform: scale(.7) rotate(0deg); opacity: .55; }
-      50% { transform: scale(1.35) rotate(180deg); opacity: 1; }
-    }
-
-    .made-by {
-      position: relative;
-      display: inline-flex;
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
       align-items: center;
-      gap: 7px;
-      margin: 2px auto 14px;
-      padding: 7px 16px;
-      border: 1px solid rgba(0,240,255,.25);
-      border-radius: 999px;
-      background: rgba(0,240,255,.05);
-      color: #94a3b8;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 10px;
+      margin-bottom: 0.8rem;
+    }
+
+    .filter-label {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.9rem;
       font-weight: 700;
-      letter-spacing: 2px;
+      min-width: 65px;
       text-transform: uppercase;
-      box-shadow: inset 0 0 18px rgba(0,240,255,.05), 0 0 18px rgba(0,240,255,.08);
+      color: var(--text-dark);
+      letter-spacing: 0.5px;
+    }
+
+    .btn-filter {
+      padding: 7px 14px;
+      border: 2px solid var(--card-border);
+      border-radius: 8px;
+      background: #E8D9C5;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-dark);
+    }
+
+    .btn-filter:hover {
+      background: #DCC8B0;
+      transform: translateY(-1px);
+    }
+
+    .btn-filter.active {
+      background: var(--card-border);
+      color: #FFF;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .sort-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 0.5rem;
+      border-top: 1px dashed rgba(74, 53, 37, 0.2);
+      padding-top: 0.8rem;
+    }
+
+    .sort-select {
+      padding: 8px 14px;
+      border: 2px solid var(--card-border);
+      border-radius: 8px;
+      background: #FFF;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* Status & Pagination */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .count-display {
+      color: #FFF;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.05rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .btn-page {
+      padding: 7px 14px;
+      border: 2px solid var(--card-border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    .btn-page:hover:not(:disabled) {
+      background: var(--card-border);
+      color: #FFF;
+      transform: translateY(-1px);
+    }
+
+    .btn-page.active {
+      background: var(--card-border);
+      color: #FFF;
+      border-color: var(--accent-gold);
+    }
+
+    .btn-page:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Grid Layout */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.35rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Chicken Card */
+    .card {
+      background: var(--card-bg);
+      border: 3px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease, border-color 0.25s ease;
+      position: relative;
       overflow: hidden;
     }
 
-    .made-by::before {
+    .card::before {
       content: '';
       position: absolute;
-      width: 45px;
-      height: 160%;
-      left: -60px;
-      top: -30%;
-      background: rgba(255,255,255,.22);
-      transform: rotate(20deg);
-      animation: creditSweep 4.5s ease-in-out infinite;
+      top: 0; left: 0; right: 0; height: 5px;
     }
 
-    @keyframes creditSweep {
-      0%,55% { left: -70px; }
-      100% { left: 110%; }
+    .card[data-role="Offense"]::before { background-color: var(--role-offense); }
+    .card[data-role="Control"]::before { background-color: var(--role-control); }
+    .card[data-role="Defense"]::before { background-color: var(--role-defense); }
+    .card[data-role="Support"]::before { background-color: var(--role-support); }
+    .card[data-role="Utility"]::before { background-color: var(--role-utility); }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.35);
+      border-color: #7A5333;
     }
 
-    .made-by span {
-      color: var(--rooster-amber);
-      text-shadow: 0 0 10px rgba(255,176,32,.65);
+    .card.selected-in-team {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px var(--accent-gold), 0 8px 20px rgba(0,0,0,0.3);
     }
 
-    .subtitle-desc {
-      text-shadow: 0 0 14px rgba(0,240,255,.18);
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.6rem;
+      gap: 8px;
     }
 
-    .tagline {
-      animation: taglineGlow 3s ease-in-out infinite;
+    .card-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.35rem;
+      color: var(--text-dark);
+      line-height: 1.2;
     }
 
-    @keyframes taglineGlow {
-      0%,100% { opacity: .72; text-shadow: 0 0 0 transparent; }
-      50% { opacity: 1; text-shadow: 0 0 14px rgba(255,176,32,.35); }
+    .badges-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
     }
 
-    @media (max-width: 620px) {
-      .title-glow::after { margin-left: 7px; }
-      .made-by { font-size: 8px; letter-spacing: 1.3px; }
+    .badge-role {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #FFF;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     }
 
-  
-    .compare-slot .slot-chicken {
-      margin-top: 5px;
-      color: #64748b;
-      font-size: 9px;
-      letter-spacing: .4px;
+    .role-Offense { background-color: var(--role-offense); }
+    .role-Control { background-color: var(--role-control); }
+    .role-Defense { background-color: var(--role-defense); }
+    .role-Support { background-color: var(--role-support); }
+    .role-Utility { background-color: var(--role-utility); }
+
+    .badge-type {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      background: #E2D2BD;
+      border-radius: 6px;
+      text-transform: uppercase;
+      font-family: 'Fredoka', sans-serif;
+      color: var(--text-dark);
+      border: 1px solid var(--card-border);
+      letter-spacing: 0.5px;
     }
 
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      background: rgba(0,0,0,0.06);
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 0.8rem;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .stat-hp { color: var(--stat-hp); }
+    .stat-atk { color: var(--stat-atk); }
+
+    .ability-box {
+      border-top: 2px dashed rgba(74, 53, 37, 0.15);
+      padding-top: 0.6rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .ability-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.35rem;
+      gap: 8px;
+    }
+
+    .ability-name {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.05rem;
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+
+    .badge-final-dmg {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.78rem;
+      background: #8C3A32;
+      color: #FFF;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+
+    .desc-text {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-bottom: 0.6rem;
+      line-height: 1.35;
+    }
+
+    .dmg-info {
+      font-size: 0.82rem;
+      background: rgba(140, 58, 50, 0.08);
+      border-left: 3px solid var(--bg-primary);
+      padding: 6px 10px;
+      margin-bottom: 0.6rem;
+      border-radius: 0 6px 6px 0;
+      color: var(--text-dark);
+    }
+
+    .effects-text {
+      font-size: 0.78rem;
+      color: #382A1D;
+      background: rgba(0,0,0,0.04);
+      padding: 8px;
+      border-radius: 6px;
+      line-height: 1.35;
+      border: 1px solid rgba(0,0,0,0.05);
+      margin-bottom: 0.8rem;
+    }
+
+    .btn-add-team {
+      width: 100%;
+      padding: 8px 12px;
+      border: 2px solid var(--card-border);
+      border-radius: 8px;
+      background: #E8D9C5;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-dark);
+    }
+
+    .btn-add-team:hover {
+      background: var(--accent-gold);
+    }
+
+    .btn-add-team.in-team {
+      background: var(--role-support);
+      color: #FFF;
+      border-color: #1B5E20;
+    }
+
+    /* Comparison Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(6px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border: 4px solid var(--card-border);
+      border-radius: 16px;
+      max-width: 1100px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px dashed rgba(74, 53, 37, 0.3);
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .modal-header h2 {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 2rem;
+      color: var(--text-dark);
+    }
+
+    .btn-close {
+      background: #C62828;
+      color: #FFF;
+      border: 2px solid var(--card-border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .compare-card {
+      background: #FFF;
+      border: 2px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .compare-card-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.25rem;
+      color: var(--text-dark);
+      text-align: center;
+    }
+
+    /* Compare Two Chickens */
+    .duel-panel {
+      background: var(--card-bg);
+      border: 3px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .duel-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.2rem;
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+    .duel-inputs { display: flex; align-items: center; gap: 10px; flex: 1; flex-wrap: wrap; min-width: 260px; }
+    .duel-input {
+      flex: 1; min-width: 160px;
+      padding: 9px 12px;
+      border: 2px solid var(--card-border);
+      border-radius: 8px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.95rem;
+      background: #FFF;
+    }
+    .duel-input.invalid { border-color: #C62828; background: #FDECEA; }
+    .duel-vs { font-family: 'Fredoka', sans-serif; font-weight: 700; color: var(--role-offense); }
+    .btn-duel {
+      padding: 9px 16px;
+      border: 2px solid var(--card-border);
+      border-radius: 8px;
+      background: var(--accent-gold);
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-dark);
+    }
+    .btn-duel:hover { background: var(--accent-warm); }
+    .duel-error { width: 100%; color: #C62828; font-weight: 600; font-size: 0.85rem; min-height: 0; }
+
+    .duel-head { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .duel-table { width: 100%; border-collapse: collapse; background: #FFF; border: 2px solid var(--card-border); border-radius: 12px; overflow: hidden; }
+    .duel-table th, .duel-table td { padding: 10px 12px; border-bottom: 1px solid rgba(74,53,37,0.15); vertical-align: top; font-size: 0.92rem; }
+    .duel-table th.stat-name { width: 150px; background: #E8D9C5; font-family: 'Fredoka', sans-serif; text-align: left; }
+    .duel-table td.win { background: #E3F4E4; font-weight: 700; color: #1B5E20; }
+    .duel-table td.tie { background: #FFF6DA; }
+    .duel-table td .diff { display: block; font-size: 0.78rem; font-weight: 500; opacity: 0.85; }
+    .duel-table td.text-cell { font-size: 0.82rem; color: var(--text-muted); }
+    .duel-name { font-family: 'Fredoka', sans-serif; font-size: 1.35rem; text-align: center; background: #FFF; border: 2px solid var(--card-border); border-radius: 12px; padding: 0.6rem; }
+
+    .card-actions { display: flex; gap: 6px; }
+    .card-actions .btn-add-team { flex: 1; }
+    .btn-remove-one {
+      width: 42px;
+      border: 2px solid #8E2A2A;
+      border-radius: 8px;
+      background: #C62828;
+      color: #FFF;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-remove-one:hover { background: #A61F1F; }
+    .team-count-badge {
+      display: inline-block;
+      margin-left: 6px;
+      background: rgba(0,0,0,0.25);
+      border-radius: 10px;
+      padding: 0 8px;
+    }
+    @media (max-width: 640px) {
+      .duel-table th.stat-name { width: 90px; }
+      .duel-head { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
-<canvas id="particle-canvas"></canvas>
-
-<div class="codex-wrapper">
-  <div id="compareDrawer" class="compare-drawer" aria-hidden="true">
-  <div class="compare-head">
-    <div class="compare-title">⚡ ABILITY COMPARISON</div>
-    <button id="compareClose" class="compare-close" type="button">✕</button>
+<div class="container">
+  <div class="header">
+    <h1>Grow A Chicken Fighter</h1>
+    <div class="subtitle">Ability Index & Building Team</div>
+    <div class="author">Made by BELACELYPRINCE</div>
+    <p class="tagline">Master all 181 chicken abilities and create team strategies in the arena.</p>
   </div>
-  <div class="compare-hint">Click any ability card to add it. Pick two abilities to compare their damage, role, type, and effects side-by-side.</div>
-  <div id="compareSlots" class="compare-slots"></div>
-  <div id="compareContent"></div>
+
+  <!-- Team Builder Dock (Max 3 Chickens) -->
+  <div class="team-dock">
+    <div class="team-title">
+      <span>🐔 Building Team (Max 3):</span>
+    </div>
+    <div class="team-slots" id="teamSlots">
+      <div class="team-slot">Slot 1: Empty</div>
+      <div class="team-slot">Slot 2: Empty</div>
+      <div class="team-slot">Slot 3: Empty</div>
+    </div>
+    <div class="team-actions">
+      <button class="btn-team-action btn-clear" onclick="clearTeam()">Clear</button>
+      <button class="btn-team-action" id="compareBtn" onclick="openComparison()" disabled>View Team</button>
+    </div>
+  </div>
+
+  <!-- Compare Two Chickens -->
+  <div class="duel-panel">
+    <div class="duel-title">⚖️ Compare Two Chickens:</div>
+    <div class="duel-inputs">
+      <input list="chickenList" id="duelA" class="duel-input" placeholder="Chicken 1 (e.g. T-Rex)" autocomplete="off">
+      <span class="duel-vs">VS</span>
+      <input list="chickenList" id="duelB" class="duel-input" placeholder="Chicken 2 (e.g. Ace Rooster)" autocomplete="off">
+    </div>
+    <button class="btn-duel" onclick="openDuel()">Compare Stats</button>
+    <div class="duel-error" id="duelError"></div>
+    <datalist id="chickenList"></datalist>
+  </div>
+
+  <div class="controls" id="controlsContainer">
+    <div class="search-bar-wrapper">
+      <input type="text" id="searchInput" class="search-bar" placeholder="Search by chicken name, ability, role, type, or effect..." oninput="filterData()">
+    </div>
+
+    <!-- Role Filter Group -->
+    <div class="filter-group" id="roleFilterGroup">
+      <span class="filter-label">Role:</span>
+      <button class="btn-filter active" onclick="setRole('All', this)">All</button>
+      <button class="btn-filter" onclick="setRole('Offense', this)">Offense</button>
+      <button class="btn-filter" onclick="setRole('Control', this)">Control</button>
+      <button class="btn-filter" onclick="setRole('Defense', this)">Defense</button>
+      <button class="btn-filter" onclick="setRole('Support', this)">Support</button>
+      <button class="btn-filter" onclick="setRole('Utility', this)">Utility</button>
+    </div>
+
+    <!-- Type Filter Group -->
+    <div class="filter-group" id="typeFilterGroup">
+      <span class="filter-label">Type:</span>
+      <button class="btn-filter active" onclick="setType('All', this)">All</button>
+      <button class="btn-filter" onclick="setType('Melee', this)">Melee</button>
+      <button class="btn-filter" onclick="setType('Ranged', this)">Ranged</button>
+    </div>
+
+    <div class="sort-container">
+      <span class="filter-label">Sort By:</span>
+      <select id="sortSelect" class="sort-select" onchange="filterData()">
+        <option value="default">Default Order</option>
+        <option value="name">Name (A-Z)</option>
+        <option value="hp">Base HP Multiplier (High-Low)</option>
+        <option value="atk">Base ATK Multiplier (High-Low)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div id="countDisplay" class="count-display">Showing Chickens</div>
+    <div id="paginationTop" class="pagination"></div>
+  </div>
+
+  <div id="gridContainer" class="grid"></div>
+
+  <div class="status-bar" style="justify-content: center; margin-top: 1rem;">
+    <div id="paginationBottom" class="pagination"></div>
+  </div>
 </div>
-<button id="compareFloat" class="compare-float" type="button"><span>COMPARE</span><span id="compareCount" class="compare-count">0</span></button>
-<div id="compareToast" class="compare-toast"></div>
 
-
-  
-  <div class="header-banner">
-    <div class="sub-title">Grow A Chicken Fighter</div>
-    <h1 class="title-glow">Ability List</h1><div class="made-by">Made by <span>BELACELYPRINCE</span></div>
-    <p class="subtitle-desc">166 Total Abilities · 94 Melee Class · 72 Ranged Class</p>
-    <p class="tagline">Every rooster, hen &amp; chick throws hands in the pit — know the kit before you strut in.</p>
-  </div>
-
-  <div class="glass-panel controls-panel">
-    <div class="search-wrapper">
-      <input id="q" type="text" class="search-box" placeholder="Search abilities by name, owner, or tactical effect..." />
+<!-- Modal for Building Team -->
+<div class="modal-overlay" id="compareModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Building Team View</h2>
+      <button class="btn-close" onclick="closeComparison()">Close</button>
     </div>
-
-    <div class="filter-row">
-      <span class="filter-label">TYPE</span>
-      <div id="typeChips" class="chip-group"></div>
-    </div>
-    
-    <div class="filter-row">
-      <span class="filter-label">ROLE</span>
-      <div id="roleChips" class="chip-group"></div>
-    </div>
+    <div class="compare-grid" id="compareGrid"></div>
   </div>
+</div>
 
-  <div id="gridTop" class="grid-toolbar">
-    <div id="count" class="count-status"></div>
-    <div id="paginationTop" class="pagination-bar"></div>
+<!-- Modal for Compare Two Chickens -->
+<div class="modal-overlay" id="duelModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Chicken vs Chicken</h2>
+      <button class="btn-close" onclick="closeDuel()">Close</button>
+    </div>
+    <div id="duelBody"></div>
   </div>
-
-  <div id="grid" class="cards-grid"></div>
-
-  <div id="paginationBottom" class="pagination-bar bottom"></div>
 </div>
 
 <script>
-const ROLES = {
-  off:  {label:"Offense",  bg:"rgba(239, 68, 68, 0.2)",   text:"#f87171", border:"#ef4444"},
-  ctrl: {label:"Control",  bg:"rgba(168, 85, 247, 0.2)",  text:"#c084fc", border:"#a855f7"},
-  def:  {label:"Defense",  bg:"rgba(59, 130, 246, 0.2)",  text:"#60a5fa", border:"#3b82f6"},
-  sup:  {label:"Support",  bg:"rgba(34, 197, 94, 0.2)",   text:"#4ade80", border:"#22c55e"},
-  util: {label:"Utility",  bg:"rgba(234, 179, 8, 0.2)",   text:"#facc15", border:"#eab308"}
-};
+const fmtX = v => (v === null || v === undefined) ? "N/A" : v + "x";
+const rawChickenData = [
+  { name: "Halo Hen", hp: 2.05, atk: 2.05, ability: "Halo Bloom", type: "Ranged", role: "Control", desc: "Creates a glowing halo under the target. The ring expands outward, pulls back inward, then bursts with light.", dmg: "30% per pull (3 pulls, 90% total) and 235% burst damage", finalDmg: "325%", finalNum: 325, effects: "Radius 10, Pull Interval 0.18s, Windup 0.45s, Gather 0.36s, Recover 0.4s, Pull Knockback 18, Burst Knockback 46, Burst Up 30." },
+  { name: "Glam Hen", hp: 1.25, atk: 1.2, ability: "Spotlight", type: "Ranged", role: "Control", desc: "Strikes a pose and every head turns. That spotlight is not the warm kind.", dmg: "70% per burn (3 burns, 210% total) and 160% final damage", finalDmg: "370%", finalNum: 370, effects: "Radius 8, Taunt Radius 14, Windup 0.6s, Recover 0.4s, Burn Interval 0.28s, Taunt Duration 3.5s, Burn Knockback 26, Final Up 34." },
+  { name: "Moonwalk Hen", hp: 1.15, atk: 1.0, ability: "Lunar Step", type: "Melee", role: "Offense", desc: "Every footfall leaves a crater. Standing nearby is the mistake.", dmg: "34% per step (6 steps, 204% total)", finalDmg: "204%", finalNum: 204, effects: "Radius 5, Windup 0.4s, Recover 0.32s, Step Interval 0.26s, Walk Duration 1.6s, Walk Speed 18, Step Knockback 20, Step Up 18." },
+  { name: "Radiant Fenghuang", hp: 1.25, atk: 1.25, ability: "Cycle of Ash", type: "Ranged", role: "Support", desc: "Burns the field down and makes it bloom in the same breath.", dmg: "150% burn damage", finalDmg: "150%", finalNum: 150, effects: "Radius 12, Windup 0.65s, Recover 0.45s, Tick Interval 0.6s, Zone Duration 6s, Between 0.25s, Burn Knockback 40, Burn Up 24, Tick Heal 4%, Heal Fraction 18%, 30% ATK Buff, Buff Duration 6s." },
+  { name: "Capoeira Rooster", hp: 1.0, atk: 1.1, ability: "Sway Step", type: "Melee", role: "Offense", desc: "It looks like dancing right up until the part where it stops looking like dancing.", dmg: "75% per kick (4 kicks, 300% total)", finalDmg: "300%", finalNum: 300, effects: "Radius 5, Windup 0.35s, Recover 0.35s, Kick Interval 0.16s, Dodge Duration 0.25s, Kick Knockback 30, Kick Up 16." },
+  { name: "Explorer Hen", hp: 1.8, atk: 1.78, ability: "Ancient Discovery", type: "Melee", role: "Offense", desc: "Amber trails light up under nearby rivals, then a wide beam runs the length of them.", dmg: "50% per burst (4 bursts, 200% total) and 320% ray", finalDmg: "520%", finalNum: 520, effects: "Burst Radius 6, Ray Radius 10, Windup 0.4s, Recover 0.4s, Burst Interval 0.18s, Burst Knockback 14, Ray Knockback 54, Ray Up 26, Burst Up 18." },
+  { name: "Loco Rooster", hp: 1.1, atk: 1.2, ability: "Bazooka", type: "Ranged", role: "Offense", desc: "Fires four, aims none, and rides the recoil farther than the rockets.", dmg: "90% per rocket (4 rockets, 360% total) and 220% final damage", finalDmg: "580%", finalNum: 580, effects: "Blast Radius 7, Final Radius 12, Spread 7, Accuracy 65%, Windup 0.5s, Recover 0.5s, Rocket Interval 0.16s, Flight 0.4s, Blast Knockback 34, Blast Up 22, Final Knockback 60, Final Up 40, Recoil Back 22, Recoil Up 10, Final Recoil Back 48, Final Recoil Up 34." },
+  { name: "Tank Rooster", hp: 1.35, atk: 1.2, ability: "Treads", type: "Melee", role: "Defense", desc: "Stops pretending to be a chicken and becomes the vehicle instead.", dmg: "70% per crush (5 crushes, 350% total)", finalDmg: "350%", finalNum: 350, effects: "Radius 6, Scale 1.8, Windup 0.5s, Recover 0.4s, Mode Duration 3s, Crush Interval 0.3s, Roll Duration 1.6s, Roll Speed 40, Crush Knockback 40, Crush Up 22, Shield 40% Max HP." },
+  { name: "Prism Rooster", hp: 1.15, atk: 1.3, ability: "Refraction", type: "Ranged", role: "Offense", desc: "Splits the blow into three colours and sends each one somewhere different.", dmg: "85% per beam (3 beams, 255% total) and 60% step bonus", finalDmg: "315%", finalNum: 315, effects: "Radius 10, Windup 0.6s, Recover 0.4s, Beam Interval 0.18s, Beam Knockback 34, Final Up 40." },
+  { name: "Jack Rooster", hp: 1.05, atk: 1.1, ability: "Lantern", type: "Ranged", role: "Offense", desc: "Opens the grin and something burning comes out of it.", dmg: "50% per spit (3 spits, 150% total) and 18% per tick (8 ticks, 144% total)", finalDmg: "294%", finalNum: 294, effects: "Radius 5, Windup 0.35s, Recover 0.32s, Spit Interval 0.14s, Zone Duration 4s, Tick Interval 0.5s, Spit Knockback 16, Spit Up 8, Tick Knockback 10." },
+  { name: "Orbital Hen", hp: 1.05, atk: 1.25, ability: "Strike From Above", type: "Ranged", role: "Offense", desc: "Never throws the punch directly. Just tells something up there where you are.", dmg: "280% strike damage", finalDmg: "280%", finalNum: 280, effects: "Radius 8, Windup 0.9s, Recover 0.4s, Strike Knockback 54, Strike Up 32." },
+  { name: "Ace Rooster", hp: 2.45, atk: 2.46, ability: "Royal Flush", type: "Ranged", role: "Offense", desc: "Five oversized cards circle the target, tighten inward, and slash one at a time before the ace lands.", dmg: "82% per card (5 cards, 410% total) and 575% final blast", finalDmg: "985%", finalNum: 985, effects: "Circle Radius 10, Final Radius 8, Windup 0.45s, Recover 0.4s, Card Interval 0.16s, Card Knockback 18, Final Knockback 62, Final Up 34." },
+  { name: "Sapper Hen", hp: 1.05, atk: 1.15, ability: "Mine Field", type: "Ranged", role: "Control", desc: "Leaves the floor untrustworthy and then walks away whistling.", dmg: "85% mine damage per mine", finalDmg: "85% per mine", finalNum: 85, effects: "Radius 9, Windup 0.5s, Recover 0.35s, Zone Duration 7s, Mine Interval 1.1s, Step Away 8, Between 0.15s." },
+  { name: "Bunker Hen", hp: 1.3, atk: 0.9, ability: "Roll Out", type: "Melee", role: "Defense", desc: "Folds into a bowling ball at the first sign of trouble. Then the trouble is everybody else's.", dmg: "55% per bump (5 bumps, 275% total)", finalDmg: "275%", finalNum: 275, effects: "Radius 4, Scale 0.7, Windup 0.35s, Recover 0.3s, Bump Interval 0.2s, Roll Duration 1.1s, Roll Speed 62, Bump Knockback 34, Bump Up 16, Shield 25% Max HP." },
+  { name: "Drone Hen", hp: 0.9, atk: 1.15, ability: "Recon Swarm", type: "Ranged", role: "Utility", desc: "Sends up four little drones. Getting close is no longer required.", dmg: "Each drone uses a nerfed Turret ability, firing 10 shots that deal 5.6% per shot (56% total per drone)", finalDmg: "224% (if all 4 drones fire all shots)", finalNum: 224, effects: "Minion Life 10s, Count 4, Retreat 12, Windup 0.45s, Recover 0.35s, Between 0.2s, Power 14%, Shot Knockback 8, Shot Interval 0.08s, Accuracy 80%, Spawn Duration 0.8s." },
+  { name: "Singularity Hen", hp: 1.1, atk: 1.2, ability: "Collapse", type: "Ranged", role: "Control", desc: "Pulls it all into one point, holds it a beat, and gives it back.", dmg: "18% per pull (4 pulls, 72% total) and 200% blast damage", finalDmg: "272%", finalNum: 272, effects: "Radius 11, Blast Radius 9, Windup 0.5s, Recover 0.4s, Hold 0.35s, Pull Interval 0.12s, Pull Knockback 38, Blast Knockback 66, Blast Up 38." },
+  { name: "Shadow Rooster", hp: 1.1, atk: 1.3, ability: "Phase", type: "Melee", role: "Defense", desc: "Goes flat for a moment. Every hit passes through the floor instead.", dmg: "160% return hit", finalDmg: "160%", finalNum: 160, effects: "Radius 7, Windup 0.1s, Recover 0.35s, Phase Duration 1.1s, Return Knockback 44, Return Up 26." },
+  { name: "Primeval Chicken", hp: 2.39, atk: 2.37, ability: "Extinction", type: "Melee", role: "Offense", desc: "Darkens the yard and drops four amber meteors around the rival before the whole area erupts.", dmg: "65% per meteor (4 meteors, 260% total) and 630% blast", finalDmg: "890%", finalNum: 890, effects: "Blast Radius 12, Meteor Radius 7, Slow Radius 12, Windup 0.6s, Recover 0.55s, Meteor Interval 0.2s, Slow Duration 2s, 40% Slow, Meteor Knockback 18, Blast Knockback 74, Blast Up 48." },
+  { name: "Sandstorm Rooster", hp: 1.05, atk: 1.1, ability: "Grit Storm", type: "Ranged", role: "Control", desc: "You cannot see, you cannot breathe, and you are getting slower.", dmg: "35% grind damage and 70% debuff damage", finalDmg: "105%", finalNum: 105, effects: "Radius 10, Windup 0.5s, Recover 0.35s, Debuff Duration 5s, 30% Debuff, 35% Slow, Grind Knockback 12." },
+  { name: "Crystal Hen", hp: 1.3, atk: 1.25, ability: "Facet", type: "Melee", role: "Defense", desc: "Rough stone outside, whole treasury inside. Breaks apart and comes straight back.", dmg: "80% per shard (4 shards, 320% total)", finalDmg: "320%", finalNum: 320, effects: "Radius 11, Self Radius 0.1, Windup 0.25s, Recover 0.4s, Shard Interval 0.24s, Shard Duration 1.2s, Shard Knockback 32, Shard Up 18, Heal Fraction 18%." },
+  { name: "High Roller Rooster", hp: 2.26, atk: 2.2, ability: "Bad Deal", type: "Ranged", role: "Offense", desc: "Throws two glowing cards. Each one flips, strikes, and leaves a small burst behind.", dmg: "155% per card (2 cards, 310% total) and 55% burst", finalDmg: "365%", finalNum: 365, effects: "Burst Radius 6, Windup 0.3s, Recover 0.3s, Card Interval 0.22s, Card Knockback 20, Burst Knockback 24, Burst Up 10." },
+  { name: "Mercy Hen", hp: 2.08, atk: 1.98, ability: "Cleanse Feather", type: "Ranged", role: "Support", desc: "A glowing feather circles the lowest ally once and heals them in a burst of gold sparkles.", dmg: "No direct damage", finalDmg: "0%", finalNum: 0, effects: "Ally Radius 28, Sparkle Radius 6, Windup 0.35s, Recover 0.3s, Cooldown 10s, Flight 0.4s, Heal Fraction 5%." },
+  { name: "Plumber Hen", hp: 1.15, atk: 1.1, ability: "Pipe Warp", type: "Melee", role: "Utility", desc: "Puts down a pipe, goes in one end, arrives somewhere much less convenient for you.", dmg: "140% upper damage", finalDmg: "140%", finalNum: 140, effects: "Radius 5, Windup 0.4s, Recover 0.34s, Beat 0.1s, Dist 3, Upper Knockback 28, Upper Up 62." },
+  { name: "Banner Hen", hp: 1.42, atk: 1.34, ability: "Rally Banner", type: "Ranged", role: "Support", desc: "Raises a rally banner that speeds up every ally around it for a short while.", dmg: "No direct damage", finalDmg: "0%", finalNum: 0, effects: "Radius 10, Windup 0.35s, Recover 0.3s, Cooldown 18s, Duration 6s, 12% ATK Buff, 10% Speed Buff." },
+  { name: "Stone Face", hp: 1.35, atk: 0.9, ability: "Deadpan", type: "Melee", role: "Defense", desc: "Does not react, does not move, does not care. Pushing it is not an option.", dmg: "No direct damage", finalDmg: "0%", finalNum: 0, effects: "Windup 0.4s, Recover 0.4s, Mode Duration 5s, Stone Duration 1.1s, Shield 45% Max HP." },
+  { name: "Belt Champion", hp: 1.25, atk: 1.25, ability: "Crowd Roar", type: "Melee", role: "Offense", desc: "Feeds on the noise. The fuller the pit, the worse this gets for you.", dmg: "70% base damage (+32% per foe, up to 6 foes, 192% bonus)", finalDmg: "262% (at max foes)", finalNum: 262, effects: "Radius 12, Self Radius 0.1, Windup 0.5s, Recover 0.4s, Max Foes 6, Knock 40, Up 22, 25% Buff, Buff Duration 5s, Per Foe 32% Bonus." },
+  { name: "Storm Colossus", hp: 2.25, atk: 2.2, ability: "Stormcall", type: "Melee", role: "Offense", desc: "Four to soften the yard. The fifth is the one they tell stories about.", dmg: "135% per bolt (4 bolts, 540% total) and 220% final damage", finalDmg: "760%", finalNum: 760, effects: "Bolt Radius 8, Final Radius 8, Windup 0.6s, Recover 0.45s, Interval 0.3s, Bolt Knockback 36, Bolt Up 30, Final Knockback 36, Final Up 30." },
+  { name: "Blitz Rooster", hp: 1.2, atk: 1.15, ability: "Overdrive", type: "Melee", role: "Offense", desc: "Blurs out and hits everyone, everywhere, before the first one drops.", dmg: "28% per pass (8 passes, 224% total) and 160% final damage", finalDmg: "384%", finalNum: 384, effects: "Radius 8, Final Radius 11, Windup 0.45s, Recover 0.4s, Pass Interval 0.09s, Pass Duration 0.07s, Pass Speed 66, Hit Knockback 6, Final Knockback 52, Final Up 30." },
+  { name: "Twister Hen", hp: 1.2, atk: 1.2, ability: "Cyclone", type: "Melee", role: "Control", desc: "Becomes the funnel and takes the whole pit along for the ride.", dmg: "40% per turn (5 turns, 200% total) and 130% throw damage", finalDmg: "330%", finalNum: 330, effects: "Radius 8, Windup 0.55s, Recover 0.4s, Turn Interval 0.14s, Pull Knockback 30, Turn Knockback 8, Turn Up 8, Throw Knockback 70, Throw Up 60." },
+  { name: "Riot Hen", hp: 1.3, atk: 0.9, ability: "Bulwark", type: "Melee", role: "Defense", desc: "Plants the shield and stops being a problem you can solve from the front.", dmg: "50% slam damage", finalDmg: "50%", finalNum: 50, effects: "Radius 7, Windup 0.45s, Recover 0.35s, Slam Knockback 48, Slam Up 24, Shield 35% Max HP, Shield Duration 6s." },
+  { name: "Cauldron Hen", hp: 1.1, atk: 1.2, ability: "Bad Brew", type: "Ranged", role: "Control", desc: "Tips the pot over. Whatever is in the puddle does not agree with anyone.", dmg: "50% splash damage and 15% per tick (12 ticks, 180% total)", finalDmg: "230%", finalNum: 230, effects: "Radius 9, Windup 0.45s, Recover 0.38s, Zone Duration 6s, Tick Interval 0.5s, Debuff Duration 6s, 32% Debuff, Splash Knockback 24, Splash Up 12." },
+  { name: "Baron Cluck", hp: 1.25, atk: 1.15, ability: "ZA WARUDO", type: "Ranged", role: "Control", desc: "Stops time, beats you senseless, and the damage lands at once.", dmg: "30% per tick (10 ticks, 300% total) and 120% final damage", finalDmg: "420%", finalNum: 420, effects: "Radius 14, Windup 0.4s, Recover 0.5s, Stop 1.5s, Final Knockback 75, Final Up 45." },
+  { name: "Zodiac Hen", hp: 1.2, atk: 1.3, ability: "Star Sign", type: "Ranged", role: "Control", desc: "Draws a different sign every fight. None of them are good news for you.", dmg: "240% fire damage, 20% air damage, and 20% per tick (12 ticks, 240% total)", finalDmg: "500%", finalNum: 500, effects: "Radius 10, Windup 0.55s, Recover 0.42s, Zone Duration 6s, Tick Interval 0.5s, Slow Duration 5s, 40% Slow, 30% Debuff, Stun Duration 0.5s, Fire Knockback 54, Fire Up 30, Air Knockback 20, Air Up 60." },
+  { name: "Bone Rooster", hp: 0.9, atk: 1.15, ability: "Rattle", type: "Melee", role: "Offense", desc: "Comes apart on purpose. The bones carry on without the rest.", dmg: "44% per spin (4 spins, 176% total)", finalDmg: "176%", finalNum: 176, effects: "Radius 6, Windup 0.3s, Recover 0.3s, Spin Interval 0.2s, Loose Duration 1.1s, Bone Knockback 22, Bone Up 12." },
+  { name: "Pact Hen", hp: 2.02, atk: 2.12, ability: "Dark Bargain", type: "Ranged", role: "Support", desc: "Hands out a dark contract for a short attack boost, then closes it with a slash at the target.", dmg: "275% slash damage", finalDmg: "275%", finalNum: 275, effects: "Ally Radius 12, Windup 0.35s, Recover 0.3s, Slash Delay 0.3s, 32% ATK Buff, Atk Duration 3.5s, Slash Knockback 40, Slash Up 16." },
+  { name: "Janitor Rooster", hp: 1.25, atk: 1.1, ability: "Wet Floor", type: "Melee", role: "Control", desc: "The sign was out. That is legally the end of it.", dmg: "20% slip damage and 8% per tick (11 ticks, 88% total)", finalDmg: "108%", finalNum: 108, effects: "Radius 15, Windup 0.4s, Recover 0.35s, Zone Duration 8s, Tick Interval 0.7s, Slow Duration 6s, 45% Slow, Slip Knockback 24, Slip Up 16." },
+  { name: "Overclock Rooster", hp: 1.2, atk: 1.25, ability: "Turbo Boost", type: "Melee", role: "Support", desc: "Runs far too hot on purpose and hands the surplus out to everyone nearby.", dmg: "0%", finalDmg: "0%", finalNum: 0, effects: "Radius 14, Self Radius 0.1, Windup 0.6s, Recover 0.45s, Buff Duration 7s, 40% Haste, 45% Buff, Heal Fraction 15%, 40% Self Slow, Between 0.2s." },
+  { name: "Beacon Rooster", hp: 1.72, atk: 1.62, ability: "Safe Light", type: "Melee", role: "Support", desc: "Drops a golden beacon under the weakest ally. The next hit taken inside it is cut down before the light fades.", dmg: "No direct damage", finalDmg: "0%", finalNum: 0, effects: "Beacon Radius 8, Windup 0.3s, Recover 0.3s, Shield Duration 2.75s, Shield 45% Max HP." },
+  { name: "Talon Titan", hp: 1.875, atk: 1.875, ability: "Titan Mode", type: "Melee", role: "Offense", desc: "Transforms into a TITAN and rampages for a few seconds.", dmg: "160% stomp damage, 220% swipe damage, and 300% bite damage", finalDmg: "680%", finalNum: 680, effects: "Scale 2.4, Swipe Reach 5, Stomp Radius 12, Windup 0.5s, Recover 0.4s, Beat 0.5s, Bite Dash 40, Bite Dash Duration 0.15s, Bite Hold 0.3s, Swipe Knockback 60, Swipe Up 20, Stomp Knockback 46, Stomp Up 30, Bite Knockback 70, Bite Up 40." },
+  { name: "Trailblazer Hen", hp: 1.8, atk: 1.78, ability: "Trail Burst", type: "Melee", role: "Offense", desc: "Four fossil marks light an amber trail and burst, then a green slash runs its whole length.", dmg: "45% per mark (4 marks, 180% total) and 300% slash", finalDmg: "480%", finalNum: 480, effects: "Slash Radius 7, Line Length 16, Windup 0.4s, Recover 0.4s, Mark Interval 0.16s, Mark Knockback 12, Mark Up 4, Slash Knockback 56, Slash Up 32." },
+  { name: "Impostor Chick", hp: 1.15, atk: 1.3, ability: "Vent", type: "Melee", role: "Utility", desc: "Looks exactly like one of yours until the moment it very much does not.", dmg: "280% stab damage", finalDmg: "280%", finalNum: 280, effects: "Radius 7, Windup 0.2s, Recover 0.4s, Beat 0.15s, Behind Dist 3, Stun Duration 0.5s, Stab Knockback 44, Stab Up 22, Vanish Duration 1s." },
+  { name: "Tsunami Hen", hp: 1.05, atk: 1.0, ability: "Wave Break", type: "Melee", role: "Control", desc: "Carries a wave overhead that never quite breaks. Until it does.", dmg: "20% pull damage and 60% wave damage (Utility displacement ability)", finalDmg: "80%", finalNum: 80, effects: "Radius 9, Windup 0.45s, Recover 0.35s, Between 0.22s, Pull Knockback 40, Wave Knockback 78, Wave Up 52." },
+  { name: "Twin Rooster", hp: 1.2, atk: 1.3, ability: "Split Image", type: "Melee", role: "Utility", desc: "Becomes two. Both of them are real and both of them are angry.", dmg: "80% split damage", finalDmg: "80%", finalNum: 80, effects: "Radius 6, Windup 0.5s, Recover 0.4s, Minion Life 14s, Split Knockback 36, Split Up 20, Power 50%." },
+  { name: "Nine-Tail Hen", hp: 1.2, atk: 1.25, ability: "Foxfire", type: "Ranged", role: "Offense", desc: "Nine tails, nine lights, and none of them miss.", dmg: "42% per light (9 lights, 378% total) and 220% final damage", finalDmg: "598%", finalNum: 598, effects: "Windup 0.55s, Recover 0.4s, Between 0.1s, Light Knockback 6, Final Knockback 54, Final Up 34." },
+  { name: "Magnet Hen", hp: 1.2, atk: 1.15, ability: "Polarity", type: "Ranged", role: "Control", desc: "Everything loose in the pit decides it would rather be over there.", dmg: "14% per pull (3 pulls, 42% total) and 180% repel damage", finalDmg: "222%", finalNum: 222, effects: "Radius 13, Windup 0.5s, Recover 0.4s, Between 0.14s, Pull Knockback 48, Repel Knockback 84, Repel Up 34." },
+  { name: "Southpaw Hen", hp: 1.3, atk: 1.05, ability: "Counter", type: "Melee", role: "Defense", desc: "Stands there and takes it. The interest on that is brutal.", dmg: "7% per jab (6 jabs) and 220% hook damage", finalDmg: "262%", finalNum: 262, effects: "Reach 2, Windup 0.2s, Recover 0.35s, Guard Duration 1.1s, Jab Knockback 9, Hook Knockback 54, Hook Up 26, Shield 30% Max HP, Reflect 120% Damage." },
+  { name: "Deep Fried Hen", hp: 1.1, atk: 1.35, ability: "Overexposure", type: "Ranged", role: "Offense", desc: "Damage comes out compressed. Sometimes it is nothing, sometimes it is everything.", dmg: "Randomly ranges from 15% to 550% damage", finalDmg: "15% to 550%", finalNum: 550, effects: "Radius 8, Windup 0.45s, Recover 0.4s, Jackpot At 85%, Knock 46, Up 26, Jackpot Damage 550%." },
+  { name: "Oracle Chick", hp: 2.15, atk: 2.15, ability: "False Future", type: "Ranged", role: "Offense", desc: "Places three future markers around the target. Two fade away, and the real marker flashes before striking.", dmg: "400% strike damage", finalDmg: "400%", finalNum: 400, effects: "Radius 8, Windup 0.3s, Recover 0.4s, Strike Delay 0.45s, Marker Life 0.25s, Fakes 2, Strike Knockback 72, Strike Up 42." },
+  { name: "Sniper Rooster", hp: 0.95, atk: 1.35, ability: "One Shot", type: "Ranged", role: "Offense", desc: "Lines up one perfect shot. Only needs to fire once.", dmg: "420% damage in a single shot", finalDmg: "420%", finalNum: 420, effects: "Windup 1.2s, Recover 0.45s, Shot Knockback 62, Shot Up 22." },
+  { name: "Magma Rooster", hp: 1.2, atk: 1.15, ability: "Lava Floor", type: "Melee", role: "Offense", desc: "Cooled on the outside only. Wherever it stands stops being safe.", dmg: "80% burst damage and 26% per tick (13 ticks, 338% total)", finalDmg: "418%", finalNum: 418, effects: "Radius 8, Windup 0.5s, Recover 0.35s, Zone Duration 6s, Tick Interval 0.45s, Burst Knockback 30, Burst Up 18." },
+  { name: "Bombardier Rooster", hp: 1.2, atk: 0.9, ability: "Boiling Spray", type: "Ranged", role: "Offense", desc: "Shows the hidden barrel. That is not surrender.", dmg: "62% per burst (3 bursts, 186% total)", finalDmg: "186%", finalNum: 186, effects: "Radius 5, Windup 0.4s, Recover 0.34s, Between 0.14s, Debuff Duration 4s, 20% Debuff, Burst Knockback 18, Burst Up 8." },
+  { name: "Cosmo Brat", hp: 0.9, atk: 1.15, ability: "Black Hole", type: "Ranged", role: "Control", desc: "Opens a singularity that swallows everyone and bursts.", dmg: "18% per pull (6 pulls, 108% total) and 220% blast damage", finalDmg: "328%", finalNum: 328, effects: "Pull Radius 15, Blast Radius 12, Windup 0.5s, Hold 0.4s, Recover 0.4s, Pull Interval 0.11s, Pull Knockback 42, Blast Knockback 72, Blast Up 42." },
+  { name: "Shadow Ninja", hp: 0.9, atk: 1.2, ability: "Smoke Clone", type: "Melee", role: "Utility", desc: "Leaves a perfect decoy behind. The real one is already gone.", dmg: "260% strike damage", finalDmg: "260%", finalNum: 260, effects: "Radius 6, Windup 0.3s, Recover 0.35s, Vanish Duration 0.55s, Behind Dist 3, Beat 0.12s, Strike Knockback 48, Strike Up 20." },
+  { name: "Agent Cluck", hp: 1.15, atk: 1.25, ability: "Smokescreen", type: "Ranged", role: "Control", desc: "Pulls everyone into the smoke, then nothing misses. The tie stays perfect.", dmg: "10% per pull (3 pulls, 30% total), 55% per shot (5 shots, 275% total), and 160% final damage", finalDmg: "465%", finalNum: 465, effects: "Pull Radius 12, Final Radius 7, Shot Radius 5, Windup 0.4s, Recover 0.45s, Gather 0.35s, Pull Interval 0.12s, Shot Interval 0.1s, Pull Knockback 38, Shot Knockback 6, Final Knockback 40, Final Up 24." },
+  { name: "Frostbite Hen", hp: 1.1, atk: 1.05, ability: "Deep Freeze", type: "Melee", role: "Control", desc: "Seals you in a block of ice and waits for the cracking to start.", dmg: "25% seal damage and 240% shatter damage", finalDmg: "265%", finalNum: 265, effects: "Windup 0.45s, Recover 0.35s, Freeze Duration 1.1s, Seal Up 14, Shatter Knockback 52, Shatter Up 30." },
+  { name: "Duelist Rooster", hp: 1.68, atk: 1.76, ability: "First Strike", type: "Melee", role: "Offense", desc: "Dashes at the strongest rival and slashes once, harder if the target is still healthier than it.", dmg: "280% base slash damage. If the target has a higher HP percentage, it deals an additional 135% bonus damage", finalDmg: "280% (or 415% with bonus)", finalNum: 415, effects: "Range 16, Windup 0.3s, Recover 0.35s, Dash Duration 0.32s, Dash Speed 70, Hit Knockback 30." },
+  { name: "Hive Rooster", hp: 1.3, atk: 1.1, ability: "Swarm", type: "Ranged", role: "Utility", desc: "Cracks the comb open and lends out the tenants. They know what to do.", dmg: "11% per sting (minions use Sprinkle Burst at 22% power)", finalDmg: "11% per bee hit", finalNum: 11, effects: "Radius 6, Windup 0.6s, Recover 0.35s, Count 4, Minion Life 12s, Between 0.25s, Power 22%, Sting Knockback 20, Sting Up 12." },
+  { name: "Mantis Hen", hp: 0.9, atk: 1.2, ability: "Blade Rush", type: "Melee", role: "Offense", desc: "Prays. Then cuts. Then cuts faster, and faster, and faster.", dmg: "50% per cut (5 cuts, 250% total)", finalDmg: "250%", finalNum: 250, effects: "Radius 4, Windup 0.35s, Recover 0.34s, Cut Interval 0.15s, Min Gap 0.05s, Cut Knockback 6, Cut Up 3, 78% Ramp." },
+  { name: "Caddie Rooster", hp: 1.0, atk: 1.15, ability: "Hole In One", type: "Melee", role: "Control", desc: "Insists on the correct club for hitting you. Will explain why afterwards.", dmg: "50% swing damage (Utility displacement ability)", finalDmg: "50%", finalNum: 50, effects: "Windup 0.55s, Recover 0.35s, Swing Knockback 92, Swing Up 40." },
+  { name: "Jackal Rooster", hp: 1.15, atk: 1.3, ability: "Judgment", type: "Melee", role: "Offense", desc: "Keeps the scales close at all times. Has never once been asked to.", dmg: "90% base damage, or 450% execute damage if target is below 25% HP", finalDmg: "90% (or 450% execute)", finalNum: 450, effects: "Windup 0.65s, Recover 0.4s, Execute Below 25% HP, Knock 46, Up 24." },
+  { name: "Basilisk Rooster", hp: 1.05, atk: 1.2, ability: "Stone Gaze", type: "Ranged", role: "Control", desc: "Hatched from a rooster's egg under a serpent. The two halves never agreed.", dmg: "90% gaze damage", finalDmg: "90%", finalNum: 90, effects: "Windup 0.7s, Recover 0.4s, Stun Duration 1s, Gaze Knockback 8." },
+  { name: "Quake Rooster", hp: 1.25, atk: 1.05, ability: "Fault Line", type: "Melee", role: "Offense", desc: "One stamp. The ground splits in a straight line and everything on it goes up.", dmg: "50% per segment (4 segments, 200% total)", finalDmg: "200%", finalNum: 200, effects: "Radius 12, Windup 0.5s, Recover 0.35s, Segment Interval 0.1s, Seg Knockback 26, Seg Up 34." },
+  { name: "Astro Chick", hp: 1.15, atk: 1.1, ability: "Low Gravity", type: "Ranged", role: "Control", desc: "Turns the weight off. Nothing lands where it meant to for a while.", dmg: "25% lift damage (Utility displacement ability)", finalDmg: "25%", finalNum: 25, effects: "Radius 13, Windup 0.5s, Recover 0.4s, Slow Duration 4s, 40% Slow, Lift Knockback 6, Lift Up 72." },
+  { name: "Storm Dragon Chicken", hp: 2.3, atk: 2.28, ability: "Stormcoil", type: "Ranged", role: "Offense", desc: "Three strikes ring the target before a dragon of lightning coils through the middle.", dmg: "65% per strike (3 strikes, 195% total) and 435% final", finalDmg: "630%", finalNum: 630, effects: "Strike Radius 11, Final Radius 11, Windup 0.5s, Recover 0.5s, Strike Interval 0.18s, Stun Duration 0.5s, Strike Knockback 16, Strike Up 6, Final Knockback 72, Final Up 48." },
+  { name: "Classic Rooster", hp: 1.0, atk: 1.0, ability: "Iaido", type: "Melee", role: "Offense", desc: "The original. No tricks, no frills — just chicken.", dmg: "280% damage on cut", finalDmg: "280%", finalNum: 280, effects: "Windup 0.4s, Recover 0.3s, Cut Delay 0.34s, Dash Duration 0.16s, Dash Speed 70, Cut Knockback 55, Cut Up 30." },
+  { name: "Sumo Rooster", hp: 1.35, atk: 1.05, ability: "Belly Slam", type: "Melee", role: "Control", desc: "Has not moved off that spot since chickhood. The pit works around it.", dmg: "110% slam damage", finalDmg: "110%", finalNum: 110, effects: "Radius 7, Windup 0.45s, Recover 0.35s, Hang 0.28s, Forward 10, Stun Duration 0.35s, Slam Knockback 44, Slam Up 20, Up 34." },
+  { name: "Manicure Hen", hp: 0.95, atk: 1.25, ability: "Sharp Look", type: "Melee", role: "Offense", desc: "Six weeks of gel and not one chip. Redoing them is not an option.", dmg: "62% per slash (3 slashes, 186% total)", finalDmg: "186%", finalNum: 186, effects: "Windup 0.28s, Recover 0.32s, Between 0.12s, Bleed Seconds 4, Slash Knockback 8, Slash Up 4." },
+  { name: "Grandmaster Rooster", hp: 2.38, atk: 2.35, ability: "Grandmaster Order", type: "Melee", role: "Support", desc: "Marks the strongest rival for the whole team, then closes with one enormous command slash.", dmg: "520% final slash", finalDmg: "520%", finalNum: 520, effects: "Mark Radius 16, Windup 0.4s, Recover 0.5s, Mark Duration 8s, 15% Ability Boost, Final Knockback 60, Final Up 40." },
+  { name: "Viper Hen", hp: 1.2, atk: 1.3, ability: "Venom Bite", type: "Melee", role: "Offense", desc: "Strikes once and leaves. Whatever got put in you is still there tomorrow.", dmg: "140% bite damage and 45% per tick (3 ticks, 135% total)", finalDmg: "275%", finalNum: 275, effects: "Bite Reach 3, Windup 0.45s, Recover 0.4s, Dash Duration 0.14s, Dash Speed 46, Tick Interval 0.38s, Poison Seconds 60, Bite Knockback 18." },
+  { name: "Bulwark Knight", hp: 1.3, atk: 1.2, ability: "Holy Ground", type: "Melee", role: "Offense", desc: "Plants a banner nobody voted for and defends the ground under it to the last feather.", dmg: "60% plant damage and 22% per tick (up to 14 ticks, 308% total)", finalDmg: "368%", finalNum: 368, effects: "Radius 9, Windup 0.55s, Recover 0.4s, Zone Duration 7s, Tick Interval 0.5s, Plant Knockback 32, Plant Up 18." },
+  { name: "Cockatrice", hp: 1.2, atk: 1.25, ability: "Wyrm Breath", type: "Ranged", role: "Offense", desc: "The other thing that hatches from a rooster's egg. This one got the wings.", dmg: "42% per tick (6 ticks, 252% total) and 20% ember damage (8 ticks over 4s)", finalDmg: "412%", finalNum: 412, effects: "Radius 7, Windup 0.7s, Recover 0.4s, Ember Interval 0.5s, Between 0.11s, Zone Duration 4s, Tick Interval 0.09s, Tick Knockback 10." },
+  { name: "Skyscrest Rooster", hp: 1.965, atk: 1.89, ability: "Skyline Split", type: "Ranged", role: "Offense", desc: "Draws a glowing line across the sky. After a short delay, the line tears open and drops a fast wind slash onto the enemy.", dmg: "300% slash", finalDmg: "300%", finalNum: 300, effects: "Line Length 14, Slash Radius 5, Windup 0.35s, Recover 0.35s, Tear 0.25s, Slash Knockback 58, Slash Up 36." },
+  { name: "Devil Chicken", hp: 2.38, atk: 2.42, ability: "Devil's Due", type: "Ranged", role: "Offense", desc: "Burns a contract onto the strongest enemy. It ticks away before ending in a red explosion.", dmg: "72% per tick (5 ticks, 360% total) and 590% burst", finalDmg: "950%", finalNum: 950, effects: "Burst Radius 10, Windup 0.4s, Recover 0.35s, Tick Interval 0.22s, Burst Knockback 56, Burst Up 28." },
+  { name: "Cheer Chick", hp: 1.15, atk: 0.9, ability: "Team Spirit", type: "Melee", role: "Support", desc: "Has never thrown a punch. Everybody nearby throws better ones.", dmg: "No direct damage", finalDmg: "0%", finalNum: 0, effects: "Radius 12, Windup 0.55s, Recover 0.35s, Beats 3, Between 0.22s, 35% Buff, Buff Duration 6s." },
+  { name: "Strike Hen", hp: 1.1, atk: 0.95, ability: "Perfect Strike", type: "Melee", role: "Offense", desc: "Tuesday league, thirty years running. Has never once been in the gutter.", dmg: "22% per tick (4 ticks, 88% total)", finalDmg: "88%", finalNum: 88, effects: "Radius 4.5, Windup 0.45s, Recover 0.35s, Roll Duration 0.5s, Roll Speed 52, Tick Knockback 26, Tick Up 14." },
+  { name: "Spa Hen", hp: 1.05, atk: 0.85, ability: "Mud Mask", type: "Ranged", role: "Control", desc: "Puts the mask on your face instead. Nothing to see for a while.", dmg: "30% splat damage and 72% debuff damage", finalDmg: "102%", finalNum: 102, effects: "Radius 8, Windup 0.35s, Recover 0.32s, Spread 0.18s, Debuff Duration 5s, 28% Debuff, Splat Knockback 10." },
+  { name: "Ronin Hen", hp: 1.0, atk: 1.15, ability: "Ten Cuts", type: "Melee", role: "Offense", desc: "No master, no coop, two swords. Sleeps where the road stops.", dmg: "26% per cut (10 cuts, 260% total)", finalDmg: "260%", finalNum: 260, effects: "Windup 0.3s, Recover 0.34s, Cut Interval 0.06s, Cut Knockback 5." },
+  { name: "Tengu Rooster", hp: 1.0, atk: 1.1, ability: "Gale Fan", type: "Melee", role: "Control", desc: "Lives up the mountain, comes down for the disrespect. The nose enters the room first.", dmg: "40% gust damage (Utility displacement ability)", finalDmg: "40%", finalNum: 40, effects: "Radius 10, Windup 0.4s, Recover 0.35s, Slow Duration 3s, 30% Slow, Gust Knockback 88, Gust Up 14." },
+  { name: "Wrapped Hen", hp: 1.25, atk: 1.05, ability: "Bandage Bind", type: "Ranged", role: "Control", desc: "Wrapped properly, buried properly, and extremely put out about being up again.", dmg: "34% per turn (5 turns, 170% total)", finalDmg: "170%", finalNum: 170, effects: "Windup 0.4s, Recover 0.34s, Bind Duration 1.4s, Turn Interval 0.22s, Tighten 0.35s, Tighten Bonus 35% Damage." },
+  { name: "Ptero Chick", hp: 1.3, atk: 1.26, ability: "Wing Dive", type: "Melee", role: "Offense", desc: "Rises above the target and dives through it three times on green wing trails, then bursts into feathers.", dmg: "55% per dive (3 dives, 165% total) and 175% burst", finalDmg: "340%", finalNum: 340, effects: "Dive Radius 7, Burst Radius 7, Windup 0.4s, Recover 0.4s, Dive Interval 0.2s, Dive Duration 0.12s, Dive Speed 52, Dive Knockback 14, Dive Up 6, Burst Knockback 48, Burst Up 30, Rise Up 26." },
+  { name: "Jurassic Chicken", hp: 1.86, atk: 1.88, ability: "Jurassic Surge", type: "Melee", role: "Control", desc: "Teal rings drag rivals inward for four fin slashes and one spine-shaped burst.", dmg: "60% per slash (4 slashes, 240% total) and 220% burst", finalDmg: "460%", finalNum: 460, effects: "Burst Radius 8, Slash Radius 7, Slow Radius 11, Windup 0.4s, Recover 0.4s, Slash Interval 0.14s, Slow Duration 0.5s, 30% Slow, Slash Knockback 12, Burst Knockback 48, Burst Up 30, Pull Knockback -34." },
+  { name: "Bulwark Hen", hp: 2.28, atk: 2.1, ability: "Hold the Line", type: "Melee", role: "Control", desc: "Stomps a wide line forward that pushes back and slows everything it catches.", dmg: "220% line damage", finalDmg: "220%", finalNum: 220, effects: "Line Length 14, Windup 0.45s, Recover 0.4s, Slow Duration 3s, 30% Slow, Line Knockback 40, Line Up 18." },
+  { name: "Taser Hen", hp: 1.15, atk: 1.05, ability: "Stun Baton", type: "Melee", role: "Offense", desc: "High-vis on purpose. The warning is visible and still ignored.", dmg: "210% hit damage", finalDmg: "210%", finalNum: 210, effects: "Windup 0.25s, Recover 0.3s, Leap Forward 26, Leap Up 18, Damage Reduction 5%, DR Duration 2s, Hit Knockback 26, Hit Up 12." },
+  { name: "T-Rex Chicken", hp: 2.47, atk: 2.48, ability: "King of the Cretaceous", type: "Melee", role: "Offense", desc: "A roar that shakes the whole yard, three tremors, and jaws that close on the strongest rival.", dmg: "140% roar + 75% per tremor (3 tremors, 225% total) + 690% bite", finalDmg: "1055%", finalNum: 1055, effects: "Bite Radius 7, Roar Radius 13, Tremor Radius 7, Focus Radius 16, Windup 0.55s, Recover 0.5s, Tremor Interval 0.2s, Stun Duration 0.5s, Tremor Knockback 20, Roar Knockback 26, Bite Knockback 76, Bite Up 46." },
+  { name: "Static Chick", hp: 0.95, atk: 1.05, ability: "Static Cheeks", type: "Melee", role: "Control", desc: "Every step builds a little more charge. Nobody wants to be near the spark.", dmg: "55% zap damage", finalDmg: "55%", finalNum: 55, effects: "Radius 6, Windup 0.35s, Recover 0.3s, Stun Duration 0.4s, Zap Knockback 22, Zap Up 12." },
+  { name: "Bonk Hen", hp: 1.05, atk: 1.15, ability: "Bat of Shame", type: "Melee", role: "Control", desc: "The bat is cardboard. It is still the worst thing that will happen to you today.", dmg: "30% bonk damage (Utility stun ability)", finalDmg: "30%", finalNum: 30, effects: "Windup 0.35s, Recover 0.32s, Stun Duration 0.6s, Bonk Knockback 44, Bonk Up 30." },
+  { name: "Aurora Hen", hp: 1.2, atk: 1.15, ability: "Northern Lights", type: "Ranged", role: "Support", desc: "Carries the night sky like a cloak and decides who gets to see by it.", dmg: "68% debuff damage", finalDmg: "68%", finalNum: 68, effects: "Radius 11, Windup 0.6s, Recover 0.4s, Sweeps 3, Between 0.3s, Debuff Duration 5s, 32% Debuff, Heal Fraction 10%." },
+  { name: "Rex Rooster", hp: 2.32, atk: 2.34, ability: "Tyrant's Roar", type: "Melee", role: "Offense", desc: "Roars up three red shockwave rings, then charges in behind a pair of enormous glowing jaws.", dmg: "45% per roar (3 roars, 135% total) and 600% bite", finalDmg: "735%", finalNum: 735, effects: "Bite Radius 7, Roar Radius 10, Windup 0.5s, Recover 0.5s, Charge Duration 0.35s, Charge Speed 52, Roar Interval 0.22s, Roar Knockback 20, Bite Knockback 70, Bite Up 44." },
+  { name: "Beast Rooster", hp: 0.85, atk: 1.15, ability: "Frenzy", type: "Melee", role: "Offense", desc: "Stopped being a chicken somewhere along the way. Nobody has volunteered to say so.", dmg: "36% per swipe (9 swipes, 324% total)", finalDmg: "324%", finalNum: 324, effects: "Radius 4, Self Radius 0.1, Windup 0.35s, Recover 0.35s, Mode Duration 3.5s, Swipe Interval 0.12s, 30% Haste, 25% Buff, Swipe Knockback 8." },
+  { name: "Tricera Hen", hp: 1.35, atk: 1.22, ability: "Tri-Horn Charge", type: "Melee", role: "Offense", desc: "Three glowing horns close in from different angles before a ground burst throws the rival up.", dmg: "65% per horn (3 horns, 195% total) and 125% final", finalDmg: "320%", finalNum: 320, effects: "Horn Radius 6, Final Radius 8, Debuff Radius 8, Windup 0.45s, Recover 0.4s, Horn Interval 0.18s, Debuff Duration 2s, 10% Debuff, Horn Knockback 18, Final Knockback 46, Final Up 34." },
+  { name: "Enforcer Rooster", hp: 1.15, atk: 1.05, ability: "Slapshot", type: "Ranged", role: "Offense", desc: "Down two teeth and up one grudge. Nobody remembers what the fight was about.", dmg: "130% shot damage", finalDmg: "130%", finalNum: 130, effects: "Windup 0.5s, Recover 0.32s, Shot Knockback 58, Shot Up 16." },
+  { name: "Sovereign Rooster", hp: 2.2, atk: 2.1, ability: "Ascendant Core", type: "Ranged", role: "Offense", desc: "Summons a golden core above the strongest nearby enemy. The core charges briefly, then fires a blast downward.", dmg: "55% per spark (3 sparks, 165% total) and 385% blast damage", finalDmg: "550%", finalNum: 550, effects: "Core Radius 14, Blast Radius 10, Spark Radius 6, Windup 0.29s, Recover 0.4s, Spark Interval 0.12s, Spark Knockback 8, Blast Knockback 66, Blast Up 44." },
+  { name: "Reek Rooster", hp: 1.05, atk: 0.95, ability: "Foul Cloud", type: "Ranged", role: "Control", desc: "Very calm about all of this. The foul cloud is the only warning you get.", dmg: "22% gas damage and 14% per tick (8 ticks, 112% total)", finalDmg: "134%", finalNum: 134, effects: "Radius 8, Windup 0.35s, Recover 0.32s, Zone Duration 5s, Tick Interval 0.6s, Debuff Duration 5s, 22% Debuff, 28% Slow, Gas Knockback 10." },
+  { name: "Torchbearer Hen", hp: 1.92, atk: 1.86, ability: "Victory Waves", type: "Ranged", role: "Offense", desc: "Sends two flame waves forward that burn whatever they wash over.", dmg: "125% per wave (2 waves, 250% total) plus 15% burn damage per tick (3 ticks, 45% total)", finalDmg: "295%", finalNum: 295, effects: "Wave Radius 8, Windup 0.35s, Recover 0.35s, Wave Interval 0.3s, Burn Interval 1s, Wave Knockback 24, Burn Duration 3s." },
+  { name: "Magma Chicken", hp: 2.4, atk: 2.42, ability: "Eruption Waves", type: "Ranged", role: "Offense", desc: "Cracks the ground under the target and sends three eruption waves up before the big one lands.", dmg: "75% per wave (3 waves, 225% total) and 420% final", finalDmg: "645%", finalNum: 645, effects: "Wave Radius 7, Final Radius 11, Windup 0.5s, Recover 0.45s, Wave Interval 0.35s, Wave Knockback 20, Final Knockback 55, Final Up 40." },
+  { name: "Stone King", hp: 2.33, atk: 2.3, ability: "Seventy-Two Strikes", type: "Melee", role: "Offense", desc: "Calls up six golden cloud copies to strike at once, then brings them together as one staff.", dmg: "60% per clone strike (6 clones, 360% total) and 450% blast", finalDmg: "810%", finalNum: 810, effects: "Clone Radius 7, Blast Radius 11, Windup 0.5s, Recover 0.5s, Clone Interval 0.16s, Stun Duration 0.6s, Clone Knockback 16, Blast Knockback 68, Blast Up 42." },
+  { name: "Rooster of Fortune", hp: 1.05, atk: 1.0, ability: "Lucky Crow", type: "Melee", role: "Support", desc: "Painted clay that crowed anyway and saved an innocent man. Still likes the odds.", dmg: "No direct damage", finalDmg: "0%", finalNum: 0, effects: "Self Radius 0.1, Windup 0.4s, Recover 0.35s, 20% Haste, 30% Buff, Buff Duration 7s, Heal Fraction 10%." },
+  { name: "Kraken Chicken", hp: 2.4, atk: 2.35, ability: "Abyssal Surge", type: "Ranged", role: "Control", desc: "Creates dark water under the target. The water pulls inward in waves before erupting in an abyssal burst.", dmg: "70% per wave (3 waves, 210% total) and 690% burst", finalDmg: "900%", finalNum: 900, effects: "Radius 13, Windup 1s, Recover 0.5s, Wave Interval 0.75s, Surge 0.35s, Wave Knockback 16, Burst Knockback 76, Burst Up 54." },
+  { name: "Founder Rooster", hp: 1.3, atk: 1.15, ability: "Titan Mode", type: "Melee", role: "Offense", desc: "Runs the yard, then becomes it. The ground cracks when it wakes up big.", dmg: "160% stomp damage, 220% swipe damage, and 300% bite damage", finalDmg: "680%", finalNum: 680, effects: "Scale 2.4, Swipe Reach 5, Stomp Radius 12, Windup 0.5s, Recover 0.4s, Beat 0.5s, Bite Dash 40, Bite Dash Duration 0.15s, Bite Hold 0.3s, Swipe Knockback 60, Swipe Up 20, Stomp Knockback 46, Stomp Up 30, Bite Knockback 70, Bite Up 40." },
+  { name: "Mascot Rooster", hp: 1.74, atk: 1.78, ability: "Underdog Rally", type: "Melee", role: "Offense", desc: "Sprints a bright lap around the target trailing confetti, then finishes with a trophy slam and a team rally.", dmg: "45% per lap tick (4 ticks, 180% total) and 285% slam", finalDmg: "465%", finalNum: 465, effects: "Lap Radius 5, Slam Radius 6, Ally Radius 10, Windup 0.3s, Recover 0.35s, Lap Interval 0.16s, 18% ATK Buff, Atk Duration 4s, Lap Knockback 12, Slam Knockback 48, Slam Up 24." },
+  { name: "Hex Rooster", hp: 1.66, atk: 1.74, ability: "Bad Omen", type: "Ranged", role: "Offense", desc: "Marks the target with a red curse circle that cracks open and bursts a moment later.", dmg: "385% burst", finalDmg: "385%", finalNum: 385, effects: "Burst Radius 8, Windup 0.3s, Recover 0.3s, Mark Delay 0.65s, 12% ATK Debuff, Atk Duration 4s, Burst Knockback 38, Burst Up 14." },
+  { name: "Angel Chicken", hp: 2.42, atk: 2.32, ability: "Final Grace", type: "Ranged", role: "Support", desc: "A halo forms over the weakest chicken, healing and shielding it, then bursts outward at everything nearby.", dmg: "460% burst", finalDmg: "460%", finalNum: 460, effects: "Burst Radius 12, Windup 0.4s, Recover 0.35s, Burst Delay 0.35s, Cooldown 10s, Shield 10% Max HP, Shield Duration 4s, Heal Fraction 10%, Burst Knockback 44, Burst Up 22." },
+  { name: "Bow Chick", hp: 0.95, atk: 1.1, ability: "Ribbon Whip", type: "Melee", role: "Offense", desc: "The bow is bigger than the chick. Taking it off has never been considered.", dmg: "55% per lash (2 lashes, 110% total) and 135% final damage", finalDmg: "245%", finalNum: 245, effects: "Radius 6, Windup 0.4s, Recover 0.34s, Lash Interval 0.16s, Lash Knockback 40, Lash Up 22." },
+  { name: "Medic Hen", hp: 1.15, atk: 0.9, ability: "Field Kit", type: "Melee", role: "Support", desc: "The whitest thing in a very brown war. That is on purpose.", dmg: "No direct damage", finalDmg: "0%", finalNum: 0, effects: "Radius 6, Windup 0.45s, Recover 0.35s, 15% Buff, Buff Duration 5s, Heal Fraction 22%." },
+  { name: "Puzzle Hen", hp: 1.76, atk: 1.68, ability: "Missing Piece", type: "Ranged", role: "Offense", desc: "Spins glowing puzzle pieces around the target, snaps them shut, and keeps one piece back as a shield.", dmg: "32% per piece (5 pieces, 160% total) and 235% burst", finalDmg: "395%", finalNum: 395, effects: "Burst Radius 9, Windup 0.35s, Recover 0.3s, Piece Interval 0.12s, Shield 18% Max HP, Shield Duration 4s, Piece Knockback 12, Piece Up 4, Burst Knockback 34, Burst Up 18." },
+  { name: "Chef Rooster", hp: 1.1, atk: 1.1, ability: "Flambé", type: "Melee", role: "Offense", desc: "Runs the kitchen. Does not think about it too hard. Nobody asks too many questions.", dmg: "70% flare damage and 20% per tick (7 ticks, 140% total)", finalDmg: "210%", finalNum: 210, effects: "Radius 4, Windup 0.35s, Recover 0.32s, Zone Duration 3.5s, Tick Interval 0.45s, Flare Knockback 20, Flare Up 10." },
+  { name: "Golden Goose", hp: 1.2, atk: 1.2, ability: "ZA WARUDO", type: "Ranged", role: "Control", desc: "Lays fortunes, stops time, owes you nothing. The one you win, never buy.", dmg: "30% per tick (10 ticks, 300% total) and 120% final damage", finalDmg: "420%", finalNum: 420, effects: "Radius 14, Windup 0.4s, Recover 0.5s, Stop 1.5s, Final Knockback 75, Final Up 45." },
+  { name: "Checkmate Hen", hp: 1.48, atk: 1.5, ability: "Castle Save", type: "Melee", role: "Support", desc: "Raises a white castle shield, then trades places with the weakest ally and hands the shield over.", dmg: "90% hit damage", finalDmg: "90%", finalNum: 90, effects: "Windup 0.3s, Recover 0.3s, Lunge Duration 0.3s, Lunge Speed 26, Swap Range 30, Shield 34% Max HP, Shield Duration 2.4s, Hit Knockback 22." },
+  { name: "NPC Chick", hp: 1.05, atk: 0.95, ability: "Loop", type: "Melee", role: "Offense", desc: "Has one line and one punch. Delivers both on a loop until something changes.", dmg: "32% per rep (7 reps, 224% total)", finalDmg: "224%", finalNum: 224, effects: "Radius 4, Windup 0.3s, Recover 0.3s, Rep Interval 0.13s, Hit Knockback 12, Hit Up 4." },
+  { name: "Kitty Chick", hp: 1.05, atk: 1.2, ability: "Cat Nap", type: "Melee", role: "Defense", desc: "Fast asleep, allegedly. The counting never stops and neither do the claws.", dmg: "80% wake damage", finalDmg: "80%", finalNum: 80, effects: "Radius 6, Windup 0.3s, Recover 0.3s, Nap Duration 1.6s, Wake Knockback 34, Wake Up 20, Reflect 90% Damage Taken." },
+  { name: "Skater Chick", hp: 0.95, atk: 1.05, ability: "Grind", type: "Melee", role: "Offense", desc: "Landed it. Will not shut up about landing it.", dmg: "30% per scrape (5 scrapes, 150% total) and 70% land damage", finalDmg: "220%", finalNum: 220, effects: "Radius 4, Windup 0.3s, Recover 0.3s, Ride Duration 1.3s, Ride Speed 50, Scrape Interval 0.22s, Scrape Knockback 14, Scrape Up 6, Land Knockback 36, Land Up 22." },
+  { name: "Prize Rooster", hp: 1.674, atk: 1.728, ability: "Prize Pop", type: "Ranged", role: "Offense", desc: "Fires a glowing prize spark at the target. The spark bounces once, then pops into a confetti burst.", dmg: "160% spark + 55% bounce + 55% burst", finalDmg: "270%", finalNum: 270, effects: "Burst Radius 7, Windup 0.35s, Recover 0.3s, Burst Delay 0.2s, Bounce Delay 0.18s, Flight 0.2s, Spark Knockback 18, Spark Up 10, Bounce Knockback 12, Burst Knockback 36, Burst Up 24." },
+  { name: "Raptor Chick", hp: 1.08, atk: 1.26, ability: "Pack Rush", type: "Melee", role: "Offense", desc: "Charges through the target four times on a green claw trail, then leaps in for a final burst.", dmg: "38% per slash (4 slashes, 152% total) and 115% burst", finalDmg: "267%", finalNum: 267, effects: "Burst Radius 6, Windup 0.3s, Recover 0.32s, Dash Duration 0.1s, Dash Speed 46, Slash Interval 0.14s, Haste Duration 2s, 18% Haste, Slash Knockback 10, Slash Up 4, Burst Knockback 40, Burst Up 26." },
+  { name: "Probe Rooster", hp: 0.9, atk: 1.0, ability: "Beam Me", type: "Melee", role: "Utility", desc: "Launched decades ago on a one-way trip. Still transmitting, still no idea why.", dmg: "85% zap damage", finalDmg: "85%", finalNum: 85, effects: "Reach 2, Windup 0.3s, Recover 0.3s, Beat 0.1s, Dist 3, Zap Knockback 24, Zap Up 12." },
+  { name: "Void Rooster", hp: 1.25, atk: 1.25, ability: "Event Horizon", type: "Ranged", role: "Control", desc: "You can see the edge and nothing else. Nothing gets out past it either.", dmg: "12% per tug (6 tugs, 72% total) and 16% per tick (14 ticks, 224% total)", finalDmg: "296%", finalNum: 296, effects: "Radius 14, Windup 0.6s, Recover 0.4s, Tug Interval 0.3s, Zone Duration 7s, Tick Interval 0.5s, Between 0.3s, Tug Knockback 44." },
+  { name: "Seraph Rooster", hp: 2.3, atk: 2.25, ability: "Heavenfall Choir", type: "Ranged", role: "Offense", desc: "Calls down several thin beams of light around the target, followed by one larger beam in the center.", dmg: "65% per beam (3 beams, 195% total) and 445% final beam damage", finalDmg: "640%", finalNum: 640, effects: "Beam Radius 7, Final Radius 11, Windup 0.6s, Recover 0.45s, Beam Interval 0.3s, Beam Knockback 14, Beam Up 8, Final Knockback 64, Final Up 50." },
+  { name: "Reaper Rooster", hp: 1.3, atk: 1.3, ability: "Soul Toll", type: "Melee", role: "Offense", desc: "Comes for what is owed and takes a handling fee. There is no appeal.", dmg: "100% base mult and 300% toll mult", finalDmg: "100% (or 300% toll)", finalNum: 300, effects: "Radius 12, Self Radius 0.1, Windup 0.6s, Recover 0.45s, Reap Below 25% HP, Cut Fraction 16%, Knock 44, Up 22." },
+  { name: "Catalyst Hen", hp: 2.35, atk: 2.3, ability: "Reaction Ring", type: "Ranged", role: "Offense", desc: "Creates an unstable energy ring under the target. The ring shrinks inward, pulses several times, then explodes.", dmg: "80% per pulse (4 pulses, 320% total) and 600% blast damage", finalDmg: "920%", finalNum: 920, effects: "Radius 12, Windup 0.54s, Recover 0.5s, Shrink 0.18s, Pulse Interval 0.14s, Pulse Knockback 14, Blast Knockback 72, Blast Up 46." },
+  { name: "Eclipse Hen", hp: 2.45, atk: 2.4, ability: "Black Sun Cataclysm", type: "Ranged", role: "Offense", desc: "Darkens the arena as a black sun forms above the target, then detonates into a large shadow shockwave.", dmg: "70% per tick (5 ticks, 350% total) and 690% burst damage", finalDmg: "1040%", finalNum: 1040, effects: "Tick Radius 10, Burst Radius 15, Windup 0.48s, Recover 0.55s, Tick Interval 0.16s, Tick Knockback 12, Tick Up 6, Burst Knockback 80, Burst Up 60." },
+  { name: "Ironcluck", hp: 1.6875, atk: 1.62, ability: "Toro Bravo", type: "Melee", role: "Offense", desc: "Slow, heavy and entirely uninterested in your plans for the round.", dmg: "55% per gore (5 gores, 275% total) and 150% final damage", finalDmg: "425%", finalNum: 425, effects: "Gore Radius 5, Scale 1.2, Windup 0.6s, Recover 0.35s, Charge Duration 0.8s, Charge Speed 54, Gore Interval 0.15s, Gore Knockback 44, Gore Up 34, Final Knockback 72, Final Up 56." },
+  { name: "Shockwave Hen", hp: 1.426, atk: 1.463, ability: "Meteor Dive", type: "Melee", role: "Offense", desc: "Goes up quietly. The landing is the part the whole yard hears.", dmg: "230% impact", finalDmg: "230%", finalNum: 230, effects: "Radius 11, Windup 0.4s, Recover 0.4s, Hang 0.75s, Forward 20, Impact Knockback 62, Impact Up 40, Up 88." },
+  { name: "Rumble Rooster", hp: 1.38, atk: 1.265, ability: "Mjolnir", type: "Melee", role: "Offense", desc: "One bolt, dropped on the spot where you were standing.", dmg: "100% damage", finalDmg: "100%", finalNum: 100, effects: "Bolt Radius 5, Windup 0.5s, Recover 0.35s, Bolt Knockback 18, Bolt Up 16." },
+  { name: "Nano Rooster", hp: 1.2, atk: 1.0, ability: "Reassemble", type: "Melee", role: "Defense", desc: "Always missing a couple of pieces. Never missing them for very long.", dmg: "No direct damage", finalDmg: "0%", finalNum: 0, effects: "Self Radius 0.1, Windup 0.35s, Recover 0.32s, Mode Duration 3s, Pulse Interval 0.28s, Shield 22% Max HP, Heal 7% Max HP per pulse (5 pulses)." },
+  { name: "Squire Chick", hp: 1.22, atk: 1.18, ability: "Shield Tap", type: "Melee", role: "Offense", desc: "Jumps in with a shield bash that knocks the target back and leaves a shield-shaped mark.", dmg: "210% hit damage", finalDmg: "210%", finalNum: 210, effects: "Windup 0.25s, Recover 0.3s, Leap Forward 26, Leap Up 18, Damage Reduction 5%, DR Duration 2s, Hit Knockback 26, Hit Up 12." },
+  { name: "Doll Hen", hp: 1.25, atk: 1.2, ability: "Voodoo", type: "Ranged", role: "Defense", desc: "Whatever lands on the doll lands on you. The doll is fine with that.", dmg: "50% per pin (5 pins, 250% total)", finalDmg: "250%", finalNum: 250, effects: "Radius 12, Windup 0.4s, Recover 0.4s, Link Duration 7s, Pin Interval 0.3s, Pin Knockback 6, Shield 30% Max HP, Reflect 120% of Damage Taken to Linked Enemy." },
+  { name: "Spider Chicken", hp: 0.9, atk: 1.05, ability: "Web Shot", type: "Ranged", role: "Control", desc: "Waits on the ceiling, drops on your head. You will not be going anywhere.", dmg: "50% per hit (4 hits, 200% total) and 130% snap damage", finalDmg: "330%", finalNum: 330, effects: "Windup 0.4s, Recover 0.35s, Stick 1.6s, Flight 0.22s, Hit Knockback 12, Hit Up 4, Snap Knockback 34, Snap Up 20." },
+  { name: "Bravo Rooster", hp: 1.25, atk: 1.2, ability: "Toro Bravo", type: "Melee", role: "Offense", desc: "Wears the matador's hat, fights as the bull. Horns out, dirt flying, no brakes.", dmg: "55% per gore (5 gores, 275% total) and 150% final damage", finalDmg: "425%", finalNum: 425, effects: "Gore Radius 5, Scale 1.2, Windup 0.6s, Recover 0.35s, Charge Duration 0.8s, Charge Speed 54, Gore Interval 0.15s, Gore Knockback 44, Gore Up 34, Final Knockback 72, Final Up 56." },
+  { name: "Crest Rooster", hp: 0.8, atk: 1.3, ability: "Energy Wave", type: "Ranged", role: "Offense", desc: "All crest, no caution. The mohawk flares gold when the power spikes.", dmg: "35% per tick (6 ticks, 210% total) and 140% final damage", finalDmg: "350%", finalNum: 350, effects: "Scale 1.15, Windup 0.7s, Recover 0.4s, Beam Duration 0.72s, Tick Interval 0.09s, Tick Knockback 10, Final Knockback 70, Final Up 20." },
+  { name: "Karaoke Rooster", hp: 1.1, atk: 1.05, ability: "Bait Track", type: "Ranged", role: "Control", desc: "Puts something on. Everybody is dancing. Nobody chose this.", dmg: "0%", finalDmg: "0%", finalNum: 0, effects: "Radius 12, Windup 0.45s, Recover 0.38s, Duration 6s, 25% Debuff, 35% Slow, 25% Buff, 25% Haste." },
+  { name: "Snapper Rooster", hp: 0.95, atk: 1.1, ability: "Cavitation Snap", type: "Ranged", role: "Offense", desc: "One claw twice the size. Snaps it, and the air itself goes off.", dmg: "75% pop damage", finalDmg: "75%", finalNum: 75, effects: "Radius 5, Windup 0.4s, Recover 0.3s, Travel 0.18s, Pop Knockback 30, Pop Up 18." },
+  { name: "Masked Luchador", hp: 1.15, atk: 1.05, ability: "Top Rope", type: "Melee", role: "Offense", desc: "Nobody has seen the face. Nobody needs to. The mask is the whole contract.", dmg: "110% splash damage", finalDmg: "110%", finalNum: 110, effects: "Radius 8, Windup 0.5s, Recover 0.45s, Hang 0.65s, Forward 22, Splash Knockback 36, Splash Up 26, Up 88." },
+  { name: "Idol Hen", hp: 1.1, atk: 1.25, ability: "Crowd Call", type: "Ranged", role: "Utility", desc: "Never fights alone. The crowd turns up whether or not anybody invited them.", dmg: "5% per hit (minions use Sprinkle Burst at 10% power)", finalDmg: "5% per fan hit", finalNum: 5, effects: "Radius 10, Windup 0.55s, Recover 0.4s, Count 6, Minion Life 12s, Power 10%, 20% Buff, Buff Duration 6s." },
+  { name: "Slugger Hen", hp: 1.05, atk: 0.85, ability: "Home Run", type: "Melee", role: "Control", desc: "Bottom of the ninth, every fight. Nobody hit ever lands nearby.", dmg: "45% swing damage (Utility displacement ability)", finalDmg: "45%", finalNum: 45, effects: "Radius 7, Windup 0.5s, Recover 0.4s, Toss 0.28s, Swing Knockback 95, Swing Up 78." },
+  { name: "Flamer Rooster", hp: 1.15, atk: 1.2, ability: "Burn Line", type: "Ranged", role: "Offense", desc: "Two tanks, one hose, and a coat that has already been on fire more than once.", dmg: "50% per lick (4 licks, 200% total) and 24% per tick (10 ticks, 240% total)", finalDmg: "440%", finalNum: 440, effects: "Radius 5, Windup 0.45s, Recover 0.35s, Licks 4, Lick Interval 0.16s, Zone Duration 5s, Tick Interval 0.5s, Dash Duration 0.7s, Dash Speed 46, Lick Knockback 22, Lick Up 12." },
+  { name: "Winger Hen", hp: 0.95, atk: 1.15, ability: "Bicycle Kick", type: "Ranged", role: "Offense", desc: "Does nothing all match, then does the only thing that mattered. Falls over if looked at.", dmg: "120% kick damage", finalDmg: "120%", finalNum: 120, effects: "Radius 5, Windup 0.4s, Recover 0.35s, Hang 0.3s, Forward 16, Kick Knockback 80, Kick Up 46, Up 52." },
+  { name: "Sergeant Hen", hp: 1.1, atk: 0.9, ability: "Egg Missile", type: "Ranged", role: "Offense", desc: "Curlers in, helmet on. Lays eggs like calling in an airstrike.", dmg: "240% blast damage", finalDmg: "240%", finalNum: 240, effects: "Blast Radius 11, Windup 0.45s, Recover 0.35s, Flight 0.85s, Blast Knockback 60, Blast Up 40." },
+  { name: "DJ Rooster", hp: 1.05, atk: 1.15, ability: "Drop the Beat", type: "Ranged", role: "Control", desc: "Everyone in the pit is on the same tempo now. Nobody voted on it.", dmg: "22% per beat (6 beats, 132% total) and 170% drop damage", finalDmg: "302%", finalNum: 302, effects: "Radius 11, Windup 0.5s, Recover 0.4s, Beat Interval 0.18s, Stun Duration 0.4s, Beat Knockback 30, Drop Knockback 60, Drop Up 34." },
+  { name: "Ballerina Hen", hp: 1.0, atk: 1.05, ability: "Grand Jeté", type: "Melee", role: "Offense", desc: "Crosses the entire pit without touching it, and lands like it was planned.", dmg: "100% land damage", finalDmg: "100%", finalNum: 100, effects: "Radius 7, Windup 0.45s, Recover 0.4s, Hang 0.5s, Forward 78, Up 46, Land Knockback 52, Land Up 34." },
+  { name: "Domino Chick", hp: 1.42, atk: 1.32, ability: "Topple Chain", type: "Ranged", role: "Offense", desc: "Sets a row of glowing dominoes toward the target. They topple one by one, shoving whatever they touch.", dmg: "62% per domino (3 dominoes, 186% total)", finalDmg: "186%", finalNum: 186, effects: "Domino Radius 4, Windup 0.3s, Recover 0.3s, Domino Interval 0.18s, Domino Knockback 26, Domino Up 6." },
+  { name: "Nugget Chick", hp: 1.05, atk: 1.25, ability: "Not Food", type: "Melee", role: "Offense", desc: "Breaded, boxed and extremely alive. Do not call it an appetiser.", dmg: "55% per hit (4 hits, 220% total)", finalDmg: "220%", finalNum: 220, effects: "Radius 5, Self Radius 0.1, Windup 0.35s, Recover 0.32s, Hit Interval 0.14s, Base Buff 5%, Max Buff 55%, Buff Duration 6s, Hit Knockback 20, Hit Up 10." },
+  { name: "404 Chick", hp: 1.2, atk: 1.3, ability: "Not Found", type: "Melee", role: "Utility", desc: "The one that never finished loading. Half the yard says it is not real.", dmg: "160% return damage", finalDmg: "160%", finalNum: 160, effects: "Radius 9, Windup 0.2s, Recover 0.4s, Gone Duration 1.2s, Silence Duration 2.5s, Copies 2, Minion Life 12s, Power 30%, Return Knockback 46, Return Up 26." },
+  { name: "This Is Fine", hp: 1.2, atk: 1.2, ability: "Denial", type: "Melee", role: "Defense", desc: "Entirely on fire, holding a cup, absolutely not discussing it.", dmg: "70% ignite damage and 24% per tick (14 ticks, 336% total)", finalDmg: "406%", finalNum: 406, effects: "Radius 9, Windup 0.4s, Recover 0.35s, Sit 0.5s, Zone Duration 7s, Tick Interval 0.5s, Shield 30% Max HP, Ignite Knockback 30, Ignite Up 16." },
+  { name: "Monarch Hen", hp: 1.15, atk: 1.15, ability: "Metamorphosis", type: "Melee", role: "Defense", desc: "Still carries the empty chrysalis. Keeps it as a receipt.", dmg: "140% burst damage", finalDmg: "140%", finalNum: 140, effects: "Radius 7, Self Radius 0.1, Windup 0.2s, Recover 0.4s, Cocoon Duration 1.2s, Mode Duration 5s, Scale 1.5, 25% Haste, 40% Buff, Heal Fraction 20%, Burst Knockback 44, Burst Up 26." },
+  { name: "Laser Rooster", hp: 1.0, atk: 1.3, ability: "Sweep Beam", type: "Ranged", role: "Offense", desc: "One red line where the face should be. It is looking at you and it does not blink.", dmg: "85% per step (5 steps, 425% total)", finalDmg: "425%", finalNum: 425, effects: "Radius 13, Windup 0.5s, Recover 0.38s, Step Interval 0.24s, Step Knockback 30, Step Up 14." },
+  { name: "Shark Chicken", hp: 1.0, atk: 1.25, ability: "Fin Rush", type: "Melee", role: "Offense", desc: "There is no water in the pit. Swims anyway. You only ever see the fin.", dmg: "150% bite damage", finalDmg: "150%", finalNum: 150, effects: "Radius 7, Windup 0.4s, Recover 0.45s, Swim 0.7s, Dive 0.35s, Swim Speed 46, Bite Knockback 44, Bite Up 62." },
+  { name: "Boba Hen", hp: 1.05, atk: 1.05, ability: "Pearl Shot", type: "Ranged", role: "Offense", desc: "Half tea, half pearls, entirely done with you. Spits first, sips later.", dmg: "34% per pearl (4 pearls, 136% total)", finalDmg: "136%", finalNum: 136, effects: "Radius 5, Windup 0.3s, Recover 0.3s, Pearl Interval 0.12s, Pearl Knockback 12, Pearl Up 6." },
+  { name: "Sigma Rooster", hp: 1.05, atk: 1.25, ability: "Grindset", type: "Melee", role: "Offense", desc: "Works alone, wins alone, has a whole philosophy about it that nobody asked for.", dmg: "60% base mult and 160% bonus damage when alone", finalDmg: "60% (or 220% alone)", finalNum: 220, effects: "Radius 12, Windup 0.4s, Recover 0.35s, Max Foes 6, Knock 38, Up 20." },
+  { name: "Stonks Hen", hp: 0.9, atk: 1.2, ability: "Line Goes Up", type: "Melee", role: "Offense", desc: "The line only goes up. There is a small red line underneath that nobody mentions.", dmg: "35% floor damage and 230% peak damage", finalDmg: "265%", finalNum: 265, effects: "Radius 6, Windup 0.4s, Recover 0.34s, Knock 32, Up 18." },
+  { name: "Valkyrie Hen", hp: 1.15, atk: 1.1, ability: "Ride of the Fallen", type: "Melee", role: "Support", desc: "Decides who is done for the day. Sometimes the answer is 'not yet, get up'.", dmg: "No direct damage", finalDmg: "0%", finalNum: 0, effects: "Radius 14, Windup 0.55s, Recover 0.4s, Revive Fraction 30%, Revive Duration 8s, 15% Haste, Heal Fraction 14%, 20% Buff, Buff Duration 6s." },
+  { name: "Unicorn Hen", hp: 1.15, atk: 1.1, ability: "Rainbow Trail", type: "Melee", role: "Support", desc: "Leaves a strip of colour that does everyone standing in it a favour.", dmg: "60% per gore (4 gores, 240% total)", finalDmg: "240%", finalNum: 240, effects: "Radius 5, Windup 0.4s, Recover 0.35s, Charge Duration 0.9s, Charge Speed 50, Gore Interval 0.2s, Zone Duration 5s, Tick Interval 0.5s, Gore Knockback 34, Gore Up 20, Tick Heal 4.5%." },
+  { name: "Farmer Rooster", hp: 1.15, atk: 0.9, ability: "Abduction", type: "Melee", role: "Control", desc: "Field-fed and true believer. Swears the lights in the sky are real.", dmg: "50% per zap (3 zaps, 150% total) and 160% drop damage", finalDmg: "310%", finalNum: 310, effects: "Rise 0.35s, Hold 0.9s, Recover 0.4s, Windup 0.5s, Lift Up 70, Drop Down 40, Zap Knockback 24, Zap Up 12, Drop Knockback 30." },
+  { name: "Puffer Hen", hp: 1.3, atk: 0.9, ability: "Inflate", type: "Melee", role: "Control", desc: "Round, tiny-finned and thrilled to see you. Getting close is the mistake.", dmg: "55% spike damage", finalDmg: "55%", finalNum: 55, effects: "Radius 5, Scale 1.7, Windup 0.4s, Recover 0.35s, Puff Duration 1.2s, Spike Knockback 72, Spike Up 58." },
+  { name: "Mermaid Hen", hp: 1.1, atk: 1.15, ability: "Siren Song", type: "Ranged", role: "Control", desc: "There is no water in the pit and that is apparently not a problem.", dmg: "14% per verse (4 verses, 56% total)", finalDmg: "56%", finalNum: 56, effects: "Radius 16, Windup 0.5s, Recover 0.4s, Verse Interval 0.28s, Taunt Duration 4s, Draw Knockback 22." },
+  { name: "Fairy Hen", hp: 0.95, atk: 1.1, ability: "Pixie Dust", type: "Ranged", role: "Support", desc: "Tiny, glittery and completely unbothered by how the fight is going.", dmg: "No direct damage", finalDmg: "0%", finalNum: 0, effects: "Radius 10, Windup 0.4s, Recover 0.35s, Puffs 4, Puff Fraction 8%, 20% Haste, Haste Duration 6s, Between 0.26s." },
+  { name: "Eel Hen", hp: 1.05, atk: 1.1, ability: "Live Wire", type: "Melee", role: "Control", desc: "Carries a charge under every feather. The warning arrives after the zap.", dmg: "30% per jolt (6 jolts, 180% total) and 90% release damage", finalDmg: "270%", finalNum: 270, effects: "Windup 0.35s, Recover 0.32s, Jolt Interval 0.16s, Grip Duration 1.2s, Jolt Knockback 24, Jolt Up 12, Release Knockback 40, Release Up 26." },
+  { name: "Sweetheart Hen", hp: 1.05, atk: 1.1, ability: "Charm", type: "Ranged", role: "Control", desc: "One look makes everyone forget what they were doing. Very convenient.", dmg: "No direct damage", finalDmg: "0%", finalNum: 0, effects: "Radius 8, Windup 0.4s, Recover 0.34s, Silence Duration 3s, Taunt Duration 3s." },
+  { name: "Comet Rooster", hp: 1.0, atk: 1.3, ability: "Meteor Dive", type: "Melee", role: "Offense", desc: "Comes down front-first and on fire. Braking was never in the plan.", dmg: "230% impact damage", finalDmg: "230%", finalNum: 230, effects: "Radius 11, Windup 0.4s, Recover 0.4s, Hang 0.75s, Forward 20, Impact Knockback 62, Impact Up 40, Up 88." },
+  { name: "Ankylo Hen", hp: 1.78, atk: 1.5, ability: "Tail Guard", type: "Melee", role: "Offense", desc: "Swings a heavy tail through everything nearby, then amber plates close over its own back.", dmg: "290% hit", finalDmg: "290%", finalNum: 290, effects: "Radius 8, Windup 0.45s, Recover 0.4s, Shield Duration 3s, Shield 8% Max HP, Hit Knockback 52, Hit Up 24." },
+  { name: "Viking Rooster", hp: 0.9, atk: 1.05, ability: "Mjölnir", type: "Melee", role: "Offense", desc: "Charges like a storm front and calls the thunder down.", dmg: "130% per bolt (3 bolts, 390% total)", finalDmg: "390%", finalNum: 390, effects: "Bolt Radius 7, Windup 0.5s, Recover 0.35s, Bolt Interval 0.3s, Bolt Knockback 30, Bolt Up 26." },
+  { name: "Bucket Rooster", hp: 1.15, atk: 1.05, ability: "The Bucket", type: "Melee", role: "Utility", desc: "Nobody has ever seen the head. There may not be one under there.", dmg: "120% hit damage", finalDmg: "120%", finalNum: 120, effects: "Radius 5, Self Radius 0.1, Windup 0.2s, Recover 0.3s, Hide Duration 0.6s, 35% Haste, Haste Duration 3s, Burst Speed 66, Burst Duration 0.35s, Hit Knockback 46, Hit Up 24." },
+  { name: "Sushi Hen", hp: 0.95, atk: 1.2, ability: "Wasabi Bomb", type: "Ranged", role: "Control", desc: "Twelve years to learn the rice. Four seconds to ruin your afternoon.", dmg: "40% bomb damage and 76% debuff damage", finalDmg: "116%", finalNum: 116, effects: "Radius 6, Windup 0.35s, Recover 0.32s, Debuff Duration 4s, 24% Debuff, 28% Slow, Bomb Knockback 14, Bomb Up 8." },
+  { name: "Pizza Rooster", hp: 1.0, atk: 1.0, ability: "Delivery", type: "Melee", role: "Offense", desc: "Thirty minutes or it is free. It has never once been free.", dmg: "110% slam damage", finalDmg: "110%", finalNum: 110, effects: "Radius 5, Windup 0.3s, Recover 0.3s, Dash Duration 0.35s, Dash Speed 52, Slam Knockback 40, Slam Up 20." },
+  { name: "Ghost Hen", hp: 1.15, atk: 1.25, ability: "Possess", type: "Ranged", role: "Control", desc: "No feet, no weight, no manners. Takes the wheel and steers you around.", dmg: "180% exit damage", finalDmg: "180%", finalNum: 180, effects: "Radius 12, Windup 0.5s, Recover 0.4s, Mark Duration 3.5s, Ride Duration 3s, Lurch Duration 0.5s, Exit Knockback 40, Exit Up 24." },
+  { name: "Chameleon Hen", hp: 1.15, atk: 1.2, ability: "Mimicry", type: "Melee", role: "Utility", desc: "Has no special to call its own. Borrows yours mid-fight and never gives it back.", dmg: "62% steal damage and 150% return damage", finalDmg: "212%", finalNum: 212, effects: "Radius 8, Self Radius 0.1, Windup 0.55s, Recover 0.4s, Steal Duration 6s, Beat 0.2s, 40% Gain Bonus, Return Knockback 42, Return Up 24." },
+  { name: "Mime Hen", hp: 1.2, atk: 1.2, ability: "Invisible Wall", type: "Ranged", role: "Control", desc: "Puts a hand out and the whole yard stops. There is nothing there. It does not matter.", dmg: "50% per push (3 pushes, 150% total)", finalDmg: "150%", finalNum: 150, effects: "Radius 10, Windup 0.5s, Recover 0.4s, Push Interval 0.25s, Stun Duration 0.35s, Push Knockback 86, Push Up 20." },
+  { name: "Thunderclap", hp: 0.95, atk: 1.2, ability: "Sound Barrier", type: "Melee", role: "Control", desc: "Gets there first. The sound arrives afterwards, and it hurts.", dmg: "190% boom damage", finalDmg: "190%", finalNum: 190, effects: "Radius 7, Blink Dist 4, Windup 0.4s, Recover 0.35s, Silence 0.3s, Stun Duration 0.5s, Boom Knockback 56, Boom Up 30." },
+  { name: "Creepy Clown", hp: 1.0, atk: 1.15, ability: "Balloon Trap", type: "Ranged", role: "Control", desc: "The balloon has been following since before anyone can remember.", dmg: "150% pop damage", finalDmg: "150%", finalNum: 150, effects: "Radius 9, Windup 0.45s, Recover 0.35s, Float 0.5s, Lift Knockback 4, Lift Up 62, Pop Knockback 44, Pop Up 20." },
+  { name: "Barista Hen", hp: 1.15, atk: 1.2, ability: "Espresso Shot", type: "Ranged", role: "Support", desc: "Remembers the order, the name and exactly how you said it. Serves it hot either way.", dmg: "130% scald damage", finalDmg: "130%", finalNum: 130, effects: "Radius 6, Ally Radius 12, Windup 0.45s, Recover 0.4s, Scald Interval 0.18s, Buff Duration 6s, 25% Haste, 35% Buff, Heal Fraction 14%, Scald Knockback 26, Scald Up 14." },
+  { name: "Zombie Chick", hp: 1.2, atk: 0.95, ability: "Rot", type: "Melee", role: "Defense", desc: "Missing a wing, a lot of feathers and most of the plot. Still coming.", dmg: "40% per shed (4 sheds, 160% total)", finalDmg: "160%", finalNum: 160, effects: "Radius 5, Self Radius 0.1, Windup 0.3s, Recover 0.3s, Shed Interval 0.16s, Pickup Fraction 4%, Shed Knockback 14, Shed Up 6." },
+  { name: "Hacker Hen", hp: 1.1, atk: 1.15, ability: "Lockout", type: "Ranged", role: "Control", desc: "Has never thrown a punch. Nobody else gets to throw one either.", dmg: "No direct damage", finalDmg: "0%", finalNum: 0, effects: "Radius 11, Windup 0.6s, Recover 0.4s, Silence Duration 3.5s." },
+  { name: "Mecha Rooster", hp: 1.3, atk: 1.25, ability: "Suit Up", type: "Melee", role: "Defense", desc: "Nothing matches and none of it belonged there. It bolts on anyway.", dmg: "150% per slam (3 slams, 450% total)", finalDmg: "450%", finalNum: 450, effects: "Radius 8, Scale 2, Windup 0.55s, Recover 0.4s, Mode Duration 2.6s, Slam Interval 0.4s, Shield 30% Max HP, 35% Buff, Slam Knockback 50, Slam Up 28." },
+  { name: "Commando Rooster", hp: 1.15, atk: 1.1, ability: "Turret", type: "Ranged", role: "Offense", desc: "Digs in, sets up, and holds the line. Does not chase you. Waits.", dmg: "40% per shot (10 shots, 400% total)", finalDmg: "400%", finalNum: 400, effects: "Windup 0.45s, Recover 0.3s, Shot Interval 0.08s, Accuracy 80%, Shot Knockback 8." },
+  { name: "Plush Chick", hp: 1.15, atk: 0.9, ability: "Squeeze", type: "Melee", role: "Offense", desc: "Stuffed, stitched and mended twice. Bounces off things that should have hurt.", dmg: "85% slam damage", finalDmg: "85%", finalNum: 85, effects: "Radius 6, Windup 0.35s, Recover 0.4s, Hang 0.5s, Squash 0.55s, Forward 4, Slam Knockback 46, Slam Up 30, Up 62." },
+  { name: "Vampire Rooster", hp: 1.15, atk: 1.25, ability: "Blood Draw", type: "Melee", role: "Offense", desc: "Impeccable manners, terrible habits. Leaves each fight better off than before.", dmg: "62% per bite (5 bites, 310% total)", finalDmg: "310%", finalNum: 310, effects: "Self Radius 0.1, Windup 0.35s, Recover 0.35s, Bite Interval 0.16s, Steal Fraction 6%, Bite Knockback 8." },
+  { name: "Little Green Chick", hp: 0.85, atk: 1.15, ability: "Mind Ray", type: "Ranged", role: "Control", desc: "Small, thin, and far too calm. You are the one who is going to move.", dmg: "16% per pull (4 pulls, 64% total)", finalDmg: "64%", finalNum: 64, effects: "Radius 12, Windup 0.5s, Recover 0.35s, Taunt Duration 3s, Pull Interval 0.16s, Pull Knockback 36." },
+  { name: "Phoenix Hen", hp: 1.25, atk: 1.25, ability: "Rebirth", type: "Melee", role: "Defense", desc: "Has done this before. Will do it again. Counts the ashes as an intermission.", dmg: "140% pyre damage", finalDmg: "140%", finalNum: 140, effects: "Radius 8, Self Radius 0.1, Windup 0.55s, Recover 0.45s, Ashes 0.35, Invuln Duration 0.9s, Revive Fraction 50%, Revive Duration 8s, Pyre Knockback 44, Pyre Up 26." },
+  { name: "Cupcake Chick", hp: 0.85, atk: 1.05, ability: "Sprinkle Burst", type: "Melee", role: "Offense", desc: "Ninety percent frosting. Explodes into sugar when startled, which is always.", dmg: "50% burst damage", finalDmg: "50%", finalNum: 50, effects: "Radius 5, Windup 0.25s, Recover 0.25s, Burst Knockback 18, Burst Up 10." },
+  { name: "Nebula Hen", hp: 1.3, atk: 1.3, ability: "Stardust", type: "Ranged", role: "Control", desc: "A jar of deep sky with feet. Whatever is forming in there is taking its time.", dmg: "20% dust damage and 12% per tick (11 ticks, 132% total)", finalDmg: "152%", finalNum: 152, effects: "Radius 15, Windup 0.7s, Recover 0.45s, Zone Duration 7s, Tick Interval 0.6s, Slow Duration 6s, 45% Slow, 30% Debuff, Dust Knockback 6." },
+  { name: "Solar Rooster", hp: 1.0, atk: 1.2, ability: "Flare", type: "Ranged", role: "Control", desc: "Too bright to look at and completely aware of it.", dmg: "20% burst damage and 75% debuff damage", finalDmg: "95%", finalNum: 95, effects: "Radius 13, Windup 0.45s, Recover 0.35s, Debuff Duration 4s, 25% Debuff, Stun Duration 0.45s, Burst Knockback 8." },
+  { name: "Pastel Goth Hen", hp: 1.2, atk: 1.2, ability: "Moody", type: "Melee", role: "Defense", desc: "Two settings and no warning about which one you are getting.", dmg: "190% spite damage and 68% debuff damage", finalDmg: "258%", finalNum: 258, effects: "Radius 10, Windup 0.45s, Recover 0.38s, Sweet Chance 50%, 32% Debuff, 35% Buff, Buff Duration 6s, Spite Knockback 50, Spite Up 28, Heal Fraction 20%." },
+  { name: "Stego Rooster", hp: 1.7, atk: 1.55, ability: "Primal Plates", type: "Melee", role: "Offense", desc: "Four colourful shockwaves burst outward one by one, then a wide slash sweeps the middle.", dmg: "55% per wave (4 waves, 220% total) and 180% sweep", finalDmg: "400%", finalNum: 400, effects: "Wave Radius 7, Sweep Radius 9, Windup 0.4s, Recover 0.4s, Wave Interval 0.2s, Shield Duration 3s, Shield 10% Max HP, Wave Knockback 16, Sweep Knockback 50, Sweep Up 20." }
+];
 
-const DATA = [["Iaido","Classic Rooster","A lightning draw splits the rival in two.","280% damage on cut","280%","0.4s cast speed, 0.16s dash. Applies 55 knockback and 30 knockup.","off","melee","Iaido||Classic Rooster||1"],["Squeeze","Plush Chick","Squashes flat, springs up, and lands on you like a dropped toy.","85% slam damage","85%","0.35s cast speed. Applies 46 knockback and 30 knockup.","off","melee","Squeeze||Plush Chick||2"],["Sprinkle Burst","Cupcake Chick","Shakes off the frosting. The sugar gets everywhere and it stings.","50% burst damage","50%","0.25s cast speed. Applies 18 knockback and 10 knockup.","off","melee","Sprinkle Burst||Cupcake Chick||3"],["Perfect Strike","Strike Hen","Three little steps, one heavy ball, and everybody in the lane goes down.","22% damage per tick (4 ticks, 88% total)","88%","0.45s cast speed. Rolls forward. Applies 26 knockback and 14 knockup per tick.","off","melee","Perfect Strike||Strike Hen||4"],["Static Cheeks","Static Chick","Builds a charge just by walking around. Has to let it out somewhere.","55% zap damage","55%","0.35s cast speed. Stuns enemies for 0.4s. Applies 22 knockback and 12 knockup.","ctrl","melee","Static Cheeks||Static Chick||5"],["Slapshot","Enforcer Rooster","Winds up like it means it, because it does. The puck is the polite part.","130% shot damage","130%","0.5s cast speed. Applies 58 knockback and 16 knockup.","off","ranged","Slapshot||Enforcer Rooster||6"],["Beam Me","Probe Rooster","Blinks out, blinks in somewhere better. Half the panels never opened anyway.","85% zap damage","85%","0.3s cast speed. Blinks 3 units. Applies 24 knockback and 12 knockup.","util","melee","Beam Me||Probe Rooster||7"],["Rot","Zombie Chick","Bits keep falling off, getting picked up, and falling off again. It never slows.","40% damage per shed (4 sheds, 160% total)","160%","0.3s cast speed. Heals 4% Max HP per pickup. Applies 14 knockback and 6 knockup per shed.","def","melee","Rot||Zombie Chick||8"],["Delivery","Pizza Rooster","Thirty minutes or it is free. It has never once been free.","110% slam damage","110%","0.3s cast speed. Dashes forward. Applies 40 knockback and 20 knockup.","off","melee","Delivery||Pizza Rooster||9"],["Loop","NPC Chick","Says the same line and throws the same punch. Forever. It does eventually work.","32% damage per rep (7 reps, 224% total)","224%","0.3s cast speed. Applies 12 knockback and 4 knockup per rep.","off","melee","Loop||NPC Chick||10"],["Deadpan","Stone Face","Does not react, does not move, does not care. Pushing it is not an option.","No direct damage","0%","0s cast speed. Enters a 5s mode. Grants 45% shield and stuns attackers for 1.1s on hit.","def","melee","Deadpan||Stone Face||11"],["Cavitation Snap","Snapper Rooster","Snaps the claw so fast the air boils. The bang arrives after you do.","75% pop damage","75%","0.4s cast speed. Applies 30 knockback and 18 knockup.\n","off","ranged","Cavitation Snap||Snapper Rooster||12"],["Black Hole","Cosmo Brat","Opens a singularity that swallows everyone and bursts.","18% damage per pull (6 pulls, 108% total) and 220% blast damage","328%","0.5s cast speed. Pulls enemies in 15 radius. Applies 42 knockback on pulls, 72 knockback and 42 knockup on blast.","ctrl","ranged","Black Hole||Cosmo Brat||13"],["Abduction","Farmer Rooster","A UFO snatches the rival, fries it and drops it.","50% damage per zap (3 zaps, 150% total) and 160% drop damage","310%","0.5s cast speed. Lifts enemy up. Applies 30 knockback and 40 knockdown on drop.","off","melee","Abduction||Farmer Rooster||14"],["Ribbon Whip","Bow Chick","Unties the bow and the ribbons do the rest. Twice.","55% damage per lash (2 lashes, 110% total) and 135% final damage","245%","0.4s cast speed. Applies 40 knockback and 22 knockup per lash.","off","melee","Ribbon Whip||Bow Chick||15"],["Pearl Shot","Boba Hen","Sips, aims, and spits tapioca like buckshot.","34% damage per pearl (4 pearls, 136% total)","136%","0.3s cast speed. Applies 12 knockback and 6 knockup per pearl.","off","ranged","Pearl Shot||Boba Hen||16"],["Mud Mask","Spa Hen","Puts the mask on your face instead. Nothing to see for a while.","30% splat damage and 72% debuff damage","102%","0.35s cast speed. Applies 10 knockback on splat. Debuffs by 28% and slows enemies by 28% for 5s.","ctrl","ranged","Mud Mask||Spa Hen||17"],["Top Rope","Masked Luchador","Climbs a corner that is not there and drops the whole weight of the belt on you.","110% splash damage","110%","0.5s cast speed. Jumps up 88 units, hangs for 0.65s. Applies 36 knockback and 26 knockup.","off","melee","Top Rope||Masked Luchador||18"],["Ten Cuts","Ronin Hen","Ten draws, one breath. You hear the sheathing before you feel the rest.","26% damage per cut (10 cuts, 260% total)","260%","0.3s cast speed. Applies 5 knockback per cut.","off","melee","Ten Cuts||Ronin Hen||19"],["Foul Cloud","Reek Rooster","Kicks up a foul cloud. Everyone downwind has regrets.","22% gas damage and 14% tick damage (8 ticks over 5s)","134%","0.35s cast speed. Creates 5s zone. Debuffs by 22% and slows by 28% for 5s. Applies 10 knockback on gas.","off","ranged","Foul Cloud||Reek Rooster||20"],["Live Wire","Eel Hen","Closes the circuit, dumps the charge, and lets the sparks finish it.","30% damage per jolt (6 jolts, 180% total) and 90% release damage","270%","0.35s cast speed. Grips enemy for 1.2s. Applies 40 knockback and 26 knockup on release.","off","melee","Live Wire||Eel Hen||21"],["Grind","Skater Chick","Rides the rail, lands it clean, and acts like that was nothing.","30% damage per scrape (5 scrapes, 150% total) and 70% land damage","220%","0.3s cast speed. Applies 14 knockback/6 knockup per scrape, and 36 knockback/22 knockup on land.","off","melee","Grind||Skater Chick||22"],["Hole In One","Caddie Rooster","One clean swing and you are somewhere on the other side of the pit.","50% swing damage","50%. (Utility displacement ability)","0.55s cast speed. Applies 92 knockback and 40 knockup.","off","melee","Hole In One||Caddie Rooster||23"],["Lunar Step","Moonwalk Hen","Every footfall leaves a crater. Standing nearby is the mistake.","34% damage per step (6 steps, 204% total)","204%","0.4s cast speed. Applies 20 knockback and 18 knockup per step.","off","melee","Lunar Step||Moonwalk Hen||24"],["Rattle","Bone Rooster","Comes apart on purpose. The bones carry on without the rest.","44% damage per spin (4 spins, 176% total)","176%","0.3s cast speed. Applies 22 knockback and 12 knockup per spin.","off","melee","Rattle||Bone Rooster||25"],["Lantern","Jack Rooster","Opens the grin and something burning comes out of it.","50% damage per spit (3 spits, 150% total) and 18% tick damage (8 ticks over 4s)","294%","0.35s cast speed. Creates 4s zone. Applies 16 knockback and 8 knockup per spit.","off","ranged","Lantern||Jack Rooster||26"],["Flambé","Chef Rooster","One pan, one splash of something flammable, one very brief conversation.","70% flare damage and 20% tick damage (7 ticks over 3.5s)","210%","0.35s cast speed. Creates 3.5s zone. Applies 20 knockback and 10 knockup on flare.","off","melee","Flambé||Chef Rooster||27"],["Wasabi Bomb","Sushi Hen","It is only a little green. That is what everybody says beforehand.","40% bomb damage and 76% debuff damage","116%","0.35s cast speed. Slows by 28% and debuffs by 24% for 4s. Applies 14 knockback and 8 knockup on bomb.","off","ranged","Wasabi Bomb||Sushi Hen||28"],["The Bucket","Bucket Rooster","Hides in it. Comes back out of it considerably faster.","120% hit damage","120%","0.2s cast speed. Hides for 0.6s, gaining 35% speed for 3s. Applies 46 knockback and 24 knockup on hit.","off","melee","The Bucket||Bucket Rooster||29"],["Line Goes Up","Stonks Hen","Gets stronger while everyone leaves it alone. Then someone finally swings.","35% floor damage and 230% peak damage","265%","0.4s cast speed. Applies 32 knockback and 18 knockup.","off","melee","Line Goes Up||Stonks Hen||30"],["Bat of Shame","Bonk Hen","Cardboard, enormous, and somehow the most humiliating thing in the pit.","30% bonk damage","30%. (Utility stun ability)","0.35s cast speed. Stuns for 0.6s. Applies 44 knockback and 30 knockup.","ctrl","melee","Bat of Shame||Bonk Hen||31"],["Blade Rush","Mantis Hen","Prays. Then cuts. Then cuts faster, and faster, and faster.","50% damage per cut (5 cuts, 250% total)","250%","0.35s cast speed. Applies 6 knockback and 3 knockup per cut.","off","melee","Blade Rush||Mantis Hen||32"],["Deep Freeze","Frostbite Hen","Seals you in a block of ice and waits for the cracking to start.","25% seal damage and 240% shatter damage","265%","0.45s cast speed. Freezes enemies for 1.1s. Applies 14 knockup on seal, 52 knockback and 30 knockup on shatter.","ctrl","melee","Deep Freeze||Frostbite Hen||33"],["Wave Break","Tsunami Hen","One wave, and nobody is standing where they were standing.","20% pull damage and 60% wave damage","80%. (Utility displacement ability)","0.45s cast speed. Applies 40 knockback on pull, 78 knockback and 52 knockup on wave.","ctrl","melee","Wave Break||Tsunami Hen||34"],["Fault Line","Quake Rooster","One stamp. The ground splits in a straight line and everything on it goes up.","50% damage per segment (4 segments, 200% total)","200%","0.5s cast speed. Applies 26 knockback and 34 knockup per segment.","off","melee","Fault Line||Quake Rooster||35"],["Bulwark","Riot Hen","Plants the shield. From the front, nothing you do counts.","50% slam damage","50%","0.45s cast speed. Grants 35% Max HP shield for 6s. Applies 48 knockback and 24 knockup.","def","melee","Bulwark||Riot Hen||36"],["Field Kit","Medic Hen","Patches up whoever is still standing nearby, including the medic.","No direct damage","0%","0.45s cast speed. Heals allies for 22% Max HP and buffs damage by 15% for 5s.","sup","melee","Field Kit||Medic Hen||37"],["Gale Fan","Tengu Rooster","One flick of the fan and the whole yard is somewhere behind you.","40% gust damage","40%. (Utility displacement ability)","0.4s cast speed. Slows enemies by 30% for 3s. Applies 88 knockback and 14 knockup.","ctrl","melee","Gale Fan||Tengu Rooster||38"],["Lucky Crow","Rooster of Fortune","Crows once. Things start going your way for a while.","No direct damage","0%","0.4s cast speed. Buffs damage by 30% and speed by 20% for 7s, and heals 10% Max HP.","off","melee","Lucky Crow||Rooster of Fortune||39"],["Boiling Spray","Bombardier Rooster","Shows the hidden barrel. That is not surrender.","62% damage per burst (3 bursts, 186% total)","186%","0.4s cast speed. Debuffs enemies by 20% for 4s. Applies 18 knockback and 8 knockup per burst.","off","ranged","Boiling Spray||Bombardier Rooster||40"],["Inflate","Puffer Hen","Swells into a spiked ball. Whoever gets close is now airborne.","55% spike damage","55%","0.4s cast speed. Scales size by 1.7x. Applies 72 knockback and 58 knockup.","util","melee","Inflate||Puffer Hen||41"],["Belly Slam","Sumo Rooster","Gets a little air. Brings down a lot of rooster.","110% slam damage","110%","0.45s cast speed. Stuns for 0.35s. Applies 44 knockback and 20 knockup.","ctrl","melee","Belly Slam||Sumo Rooster||42"],["Bicycle Kick","Winger Hen","Goes upside down, connects, and the ball leaves the pit. So do you.","120% kick damage","120%","0.4s cast speed. Jumps up 52 units. Applies 80 knockback and 46 knockup.","off","ranged","Bicycle Kick||Winger Hen||43"],["Flare","Solar Rooster","Goes white. Everything nearby stops being able to see or care.","20% burst damage and 75% debuff damage","95%","0.45s cast speed. Stuns for 0.45s and debuffs by 25% for 4s. Applies 8 knockback.","ctrl","ranged","Flare||Solar Rooster||44"],["Stun Baton","Taser Hen","Taps you once. You have a short conversation with the floor about it.","210% hit damage","210%","0.25s cast speed. Leaps forward 26 units and jumps 18 units up. Applies 26 knockback and 12 knockup. Grants a 5% Damage Reduction shield for 2 seconds.","ctrl","melee","Stun Baton||Taser Hen||45"],["Recon Swarm","Drone Hen","Sends up four little drones. Getting close is no longer required.","Each drone uses a nerfed Turret ability, firing 10 shots that deal 5.6% damage per shot (56% total per drone)","224% (if all 4 drones fire all shots)","0.45s cast speed. Spawns 4 drones over 0.8s that last for 10s. Drones retreat from enemies within 12 units. Each shot applies 8 knockback.","off","ranged","Recon Swarm||Drone Hen||46"],["Reassemble","Nano Rooster","Loses pieces constantly. Gets them back faster than you can take them.","No direct damage","0%","0.35s cast speed. Grants 22% shield for 3s and heals 7% Max HP per pulse (5 pulses).","def","melee","Reassemble||Nano Rooster||47"],["Bandage Bind","Wrapped Hen","Unrolls. Wraps. You are part of the exhibit now.","34% damage per turn (5 turns, 170% total)","170%","0.4s cast speed. Binds enemy for 1.4s, tightening for 35% bonus damage.","ctrl","ranged","Bandage Bind||Wrapped Hen||48"],["Balloon Trap","Creepy Clown","Hands out balloons. Everyone who takes one goes up, and then goes off.","150% pop damage","150%","0.45s cast speed. Lifts enemy for 0.5s. Applies 44 knockback and 20 knockup on pop.","ctrl","ranged","Balloon Trap||Creepy Clown||49"],["Charm","Sweetheart Hen","A quick sparkle, and you forget what you were about to do.","No direct damage","0%","0.4s cast speed. Silences for 3s and taunts for 3s.","ctrl","ranged","Charm||Sweetheart Hen||50"],["Not Food","Nugget Chick","Has been called an appetiser one too many times and has feelings about it.","55% damage per hit (4 hits, 220% total)","220%","0.35s cast speed. Buffs own damage by 5% (stacking up to 55%) for 6s. Applies 20 knockback and 10 knockup per hit.","off","melee","Not Food||Nugget Chick||51"],["Pipe Warp","Plumber Hen","Puts down a pipe, goes in one end, arrives somewhere much less convenient for you.","140% upper damage","140%","0.4s cast speed. Blinks 3 units. Applies 28 knockback and 62 knockup.","util","melee","Pipe Warp||Plumber Hen||52"],["Sharp Look","Manicure Hen","Checks the nails, then puts them to work. They leave a mark.","62% damage per slash (3 slashes, 186% total)","186%","0.28s cast speed. Applies 4s bleed. Applies 8 knockback and 4 knockup per slash.","off","melee","Sharp Look||Manicure Hen||53"],["Cat Nap","Kitty Chick","Curls up and stops caring. Whoever gets close learns the nap was a setup.","80% wake damage","80%","0.3s cast speed. Naps for 1.6s, reflecting 90% of damage taken. Applies 34 knockback and 20 knockup on wake.","def","melee","Cat Nap||Kitty Chick||54"],["Team Spirit","Cheer Chick","Two pompoms and a chant, and suddenly the whole team hits harder.","No direct damage","0%","0.55s cast speed. Buffs allies' damage by 35% for 6s.","sup","melee","Team Spirit||Cheer Chick||55"],["Grand Jeté","Ballerina Hen","Crosses the whole pit mid-air and lands on pointe. The floor disagrees.","100% land damage","100%","0.45s cast speed. Leaps forward 78 units, hangs in air for 0.5s. Applies 52 knockback and 34 knockup.","off","melee","Grand Jeté||Ballerina Hen||56"],["Mjölnir","Viking Rooster","Summons the storm and calls the lightning down.","130% damage per bolt (3 bolts, 390% total)","390%","0.5s cast speed. Applies 30 knockback and 26 knockup per bolt.","off","melee","Mjölnir||Viking Rooster||57"],["Egg Missile","Sergeant Hen","Fires an egg-missile that blows up in a mushroom cloud.","240% blast damage","240%","0.45s cast speed. Applies 60 knockback and 40 knockup.","off","ranged","Egg Missile||Sergeant Hen||58"],["Home Run","Slugger Hen","One swing. It barely stings — but everybody leaves the field.","45% swing damage","45%. (Utility displacement ability)","0.5s cast speed. Applies 95 knockback and 78 knockup. Used to instantly ring out enemies.","util","melee","Home Run||Slugger Hen||59"],["Mjolnir","Rumble Rooster","One bolt, dropped on the spot where you were standing.","100% damage","100%","0.5s cast speed. Applies 18 knockback and 16 knockup.","off","melee","Mjolnir||Rumble Rooster||60"],["Topple Chain","Domino Chick","A row of glowing dominoes runs at the target and strikes one by one, shoving whatever they touch.","62% damage per domino (3 dominoes, 186% total)","186%","0.3s cast speed. 4-unit radius. Applies 26 knockback and 6 knockup per domino.","off","ranged","Topple Chain||Domino Chick||61"],["Shield Tap","Squire Chick","Jumps in with a shield bash that knocks the target back and leaves a shield-shaped mark.","210% hit damage","210%","0.25s cast speed. Leaps forward 26 units and jumps 18 units up. Applies 26 knockback and 12 knockup. Grants the Squire a 5% Damage Reduction shield for 2 seconds.","def","melee","Shield Tap||Squire Chick||62"],["Lava Floor","Magma Rooster","The ground underneath stops being ground for a while.","80% burst damage and 26% tick damage (13 ticks over 6s)","418%","0.5s cast speed. Creates a 6s zone. Applies 30 knockback and 18 knockup on burst.","off","melee","Lava Floor||Magma Rooster||63"],["Grit Storm","Sandstorm Rooster","You cannot see, you cannot breathe, and you are getting slower.","35% grind damage and 70% debuff damage","105%","0.5s cast speed. Slows enemies by 35% for 5s. Applies 12 knockback on grind.","ctrl","ranged","Grit Storm||Sandstorm Rooster||64"],["Sound Barrier","Thunderclap","Arrives before the noise does. The noise is the part that hurts.","190% boom damage","190%","0.4s cast speed. Blinks 4 units. Silences for 0.3s and stuns for 0.5s. Applies 56 knockback and 30 knockup.","ctrl","melee","Sound Barrier||Thunderclap||65"],["Mine Field","Sapper Hen","Leaves the floor untrustworthy and then walks away whistling.","85% mine damage per mine","85% per mine","0.5s cast speed. Creates a 7s mine zone. Mines detonate every 1.1s.","off","ranged","Mine Field||Sapper Hen||66"],["Burn Line","Flamer Rooster","Draws a line of fire and leaves it burning in the wake.","50% damage per lick (4 licks, 200% total) and 24% tick damage (10 ticks over 5s)","440%","0.45s cast speed. Creates a 5s fire zone. Applies 22 knockback and 12 knockup per lick.","off","ranged","Burn Line||Flamer Rooster||67"],["Smoke Clone","Shadow Ninja","Leaves a perfect decoy behind. The real one is already gone.","260% strike damage","260%","0.3s cast speed. Vanishes for 0.55s. Applies 48 knockback and 20 knockup.","util","melee","Smoke Clone||Shadow Ninja||68"],["Stone Gaze","Basilisk Rooster","Meets your eye. That was the mistake, not anything you did after.","90% gaze damage","90%","0.7s cast speed. Stuns enemies for 1s. Applies 8 knockback.","ctrl","ranged","Stone Gaze||Basilisk Rooster||69"],["Roll Out","Bunker Hen","Tucks in, seals the plates, and rolls straight through the lot of you.","55% damage per bump (5 bumps, 275% total)","275%","0.35s cast speed. Grants 25% shield. Applies 34 knockback and 16 knockup per bump.","def","melee","Roll Out||Bunker Hen||70"],["Frenzy","Beast Rooster","Stops aiming, pacing, thinking. The claws carry on by themselves.","36% damage per swipe (9 swipes, 324% total)","324%","0.35s cast speed. Buffs damage by 25% and speed by 30% for 3.5s. Applies 8 knockback per swipe.","off","melee","Frenzy||Beast Rooster||71"],["Counter","Southpaw Hen","Stands there and takes it. The interest on that is brutal.","7% damage per jab (6 jabs) and 220% hook damage","262%","0.2s cast speed. Guards for 1.1s, grants 30% shield, reflects 120% damage. Applies 54 knockback and 26 knockup on hook.","def","melee","Counter||Southpaw Hen||72"],["Sway Step","Capoeira Rooster","Slips out of danger, then snaps back with a flurry of kicks.","75% damage per kick (4 kicks, 300% total)","300%","0.35s cast speed. Dodges for 0.25s per kick. Applies 30 knockback and 16 knockup per kick.","def","melee","Sway Step||Capoeira Rooster||73"],["Ride of the Fallen","Valkyrie Hen","Picks the fallen up off the floor and puts them back in the fight.","No direct damage","0%","0.55s cast speed. Heals 14%, revives with 30% HP, and buffs damage by 20% for 6s.","sup","melee","Ride of the Fallen||Valkyrie Hen||74"],["Meteor Dive","Comet Rooster","Launches straight up, hangs there, then crashes down all at once.","230% impact damage","230%","0.4s cast speed. Jumps up 88 units, hangs for 0.75s. Applies 62 knockback and 40 knockup.","off","melee","Meteor Dive||Comet Rooster||75"],["Mind Ray","Little Green Chick","Points at you. You walk towards it. Nobody involved is happy about this.","16% damage per pull (4 pulls, 64% total)","64%","0.5s cast speed. Taunts for 3s. Applies 36 knockback per pull.","ctrl","ranged","Mind Ray||Little Green Chick||76"],["Strike From Above","Orbital Hen","Paints a spot on the floor and lets something very far away do the rest.","280% strike damage","280%","0.9s cast speed. Applies 54 knockback and 32 knockup.","off","ranged","Strike From Above||Orbital Hen||77"],["Collapse","Singularity Hen","Pulls it all into one point, holds it a beat, and gives it back.","18% damage per pull (4 pulls, 72% total) and 200% blast damage","272%","0.5s cast speed. Applies 38 knockback per pull, 66 knockback and 38 knockup on blast.","off","ranged","Collapse||Singularity Hen||78"],["Sweep Beam","Laser Rooster","One red line, moving slowly across everything you were standing on.","85% damage per step (5 steps, 425% total)","425%","0.5s cast speed. Applies 30 knockback and 14 knockup per step.","off","ranged","Sweep Beam||Laser Rooster||79"],["Blood Draw","Vampire Rooster","Whatever gets drained from you gets kept. That is the arrangement.","62% damage per bite (5 bites, 310% total)","310%","0.35s cast speed. Heals 6% Max HP per bite. Applies 8 knockback per bite.","off","melee","Blood Draw||Vampire Rooster||80"],["Drop the Beat","DJ Rooster","Everyone moves on the downbeat. Nobody agreed to this.","22% damage per beat (6 beats, 132% total) and 170% drop damage","302%","0.5s cast speed. Stuns for 0.4s. Applies 30 knockback per beat, 60 knockback and 34 knockup on drop.","ctrl","ranged","Drop the Beat||DJ Rooster||81"],["Pixie Dust","Fairy Hen","Shakes out the wings. Allies get up faster than they should.","No direct damage","0%","0.4s cast speed. Heals 8% Max HP per puff (4 puffs, 32% total). Buffs speed by 20% for 6s.","sup","ranged","Pixie Dust||Fairy Hen||82"],["Metamorphosis","Monarch Hen","Cocoons up, then returns as something the fight never planned for.","140% burst damage","140%","0.2s cast speed. Cocoons for 1.2s. Buffs damage by 40% and speed by 25% for 5s. Heals 20% Max HP. Applies 44 knockback and 26 knockup on burst.","def","melee","Metamorphosis||Monarch Hen||83"],["Siren Song","Mermaid Hen","Sings. Everybody walks over. Nobody can explain afterwards why.","14% damage per verse (4 verses, 56% total)","56%","0.5s cast speed. Taunts for 4s. Applies 22 knockback per verse.","ctrl","ranged","Siren Song||Mermaid Hen||84"],["Bad Brew","Cauldron Hen","Tips the pot over. Whatever is in the puddle does not agree with anyone.","50% splash damage and 15% tick damage (12 ticks over 6s)","230%","0.45s cast speed. Creates 6s zone. Debuffs by 32% for 6s. Applies 24 knockback and 12 knockup on splash.","ctrl","ranged","Bad Brew||Cauldron Hen||85"],["Rainbow Trail","Unicorn Hen","Charges through and leaves a strip of colour that patches up whoever stands in it.","60% damage per gore (4 gores, 240% total)","240%","0.4s cast speed. Creates 5s healing zone. Applies 34 knockback and 20 knockup per gore.","sup","melee","Rainbow Trail||Unicorn Hen||86"],["Denial","This Is Fine","Everything is on fire and that has become a tomorrow problem.","70% ignite damage and 24% tick damage (14 ticks over 7s)","406%","0.4s cast speed. Creates 7s zone. Grants 30% shield. Applies 30 knockback and 16 knockup on ignite.","def","melee","Denial||This Is Fine||87"],["Fin Rush","Shark Chicken","Dives into the dirt. All you get is the fin, and then you get the rest.","150% bite damage","150%","0.4s cast speed. Swims forward at 46 speed. Applies 44 knockback and 62 knockup.","off","melee","Fin Rush||Shark Chicken||88"],["Energy Wave","Crest Rooster","Charges and fires an energy wave that sweeps it all.","35% damage per tick (6 ticks, 210% total) and 140% final damage","350%","0.7s cast speed. Applies 10 knockback per tick, 70 knockback and 20 knockup on final hit.","off","ranged","Energy Wave||Crest Rooster||89"],["Turret","Commando Rooster","Mounts a turret and unloads without mercy.","40% damage per shot (10 shots, 400% total)","400%","0.45s cast speed. Applies 8 knockback per shot.","off","ranged","Turret||Commando Rooster||90"],["Web Shot","Spider Chicken","Thwip. Now you are glued to the floor, and it is already on you.","50% damage per hit (4 hits, 200% total) and 130% snap damage","330%","0.4s cast speed. Sticks enemy to the floor for 1.6s. Applies 34 knockback and 20 knockup on snap.","ctrl","ranged","Web Shot||Spider Chicken||91"],["Bazooka","Loco Rooster","Fires four, aims none, and rides the recoil farther than the rockets.","90% damage per rocket (4 rockets, 360% total) and 220% final damage","580%","0.5s cast speed. Applies 34 knockback/22 knockup per rocket, and 60 knockback/40 knockup on final hit. Recoils user backward.","off","ranged","Bazooka||Loco Rooster||92"],["Castle Save","Checkmate Hen","Raises a white castle shield, then lunges back at the target behind it.","90% hit damage","90%","0.3s cast speed. Grants a 34% shield for 2.4s. Applies 22 knockback.","def","melee","Castle Save||Checkmate Hen||93"],["Rally Banner","Banner Hen","Raises a rally banner that speeds up every ally around it for a short while.","No direct damage","0%","0.35s cast speed. Buffs all allies in a 10-unit radius with +12% ATK and +10% Speed for 6 seconds. Has an 18-second cooldown.\n","sup","melee","Rally Banner||Banner Hen||94"],["Cyclone","Twister Hen","Becomes the funnel and takes the whole pit along for the ride.","40% damage per turn (5 turns, 200% total) and 130% throw damage","330%","0.55s cast speed. Applies 30 pull knockback per turn, 70 knockback and 60 knockup on throw.","off","melee","Cyclone||Twister Hen||95"],["One Shot","Sniper Rooster","Lines up one perfect shot. Only needs to fire once.","420% damage in a single shot","420%","1.2s cast speed. Applies 62 knockback and 22 knockup.","off","ranged","One Shot||Sniper Rooster||96"],["Treads","Tank Rooster","Stops pretending to be a chicken and becomes the vehicle instead.","70% damage per crush (5 crushes, 350% total)","350%","0.5s cast speed. Grants 40% shield for 3s. Applies 40 knockback and 22 knockup per crush.","def","melee","Treads||Tank Rooster||97"],["Swarm","Hive Rooster","Cracks the comb open and lends out the tenants. They know what to do.","11% per sting (minions use Sprinkle Burst at 22% power)","11% per bee hit","0.6s cast speed. Spawns 4 bee minions for 12s. Applies 20 knockback and 12 knockup per sting.","off","ranged","Swarm||Hive Rooster||98"],["Wyrm Breath","Cockatrice","Opens the wings, fills the lungs, and empties them at you.","42% damage per tick (6 ticks, 252% total) and 20% ember damage (8 ticks over 4s)","412%","0.7s cast speed. Creates a 4s zone. Applies 10 knockback per tick.","off","ranged","Wyrm Breath||Cockatrice||99"],["Judgment","Jackal Rooster","Weighs what is left of you against a feather. It rarely goes well.","90% base damage, or 450% execute damage if target is below 25% HP","90% (or 450% execute)","0.65s cast speed. Applies 46 knockback and 24 knockup.","off","melee","Judgment||Jackal Rooster||100"],["Crowd Roar","Belt Champion","Feeds on the noise. The fuller the pit, the worse this gets for you.","70% base damage (+32% per foe, up to 6 foes, 192% bonus)","262% (at max foes)","0.5s cast speed. Buffs own damage by 25% for 5s. Applies 40 knockback and 22 knockup.","off","melee","Crowd Roar||Belt Champion||101"],["Low Gravity","Astro Chick","Turns the weight off. Nothing lands where it meant to for a while.","25% lift damage","25%. (Utility displacement ability)","0.5s cast speed. Slows enemies by 40% for 4s. Applies 6 knockback and 72 knockup on lift.","ctrl","ranged","Low Gravity||Astro Chick||102"],["Polarity","Magnet Hen","Everything loose in the pit decides it would rather be over there.","14% damage per pull (3 pulls, 42% total) and 180% repel damage","222%","0.5s cast speed. Applies 48 knockback per pull, 84 knockback and 34 knockup on repel.","ctrl","ranged","Polarity||Magnet Hen||103"],["Suit Up","Mecha Rooster","Bolts yard scrap on and comes back twice the size.","150% damage per slam (3 slams, 450% total)","450%","0.55s cast speed. Scales size by 2x, grants 30% shield, and buffs damage by 35% for 2.6s. Applies 50 knockback and 28 knockup per slam.","def","melee","Suit Up||Mecha Rooster||104"],["Espresso Shot","Barista Hen","Serves it scalding to you and double to all allies.","130% scald damage","130%","0.45s cast speed. Heals allies 14% Max HP, buffs damage by 35% and speed by 25% for 6s. Applies 26 knockback and 14 knockup on scald.","sup","ranged","Espresso Shot||Barista Hen||105"],["Wet Floor","Janitor Rooster","The sign was out. That is legally the end of it.","20% slip damage and 8% tick damage (11 ticks over 8s)","108%","0.4s cast speed. Creates 8s zone. Slows by 45% for 6s. Applies 24 knockback and 16 knockup on slip.","ctrl","melee","Wet Floor||Janitor Rooster||106"],["Moody","Pastel Goth Hen","Two settings, no warning. One of them heals and the other one really does not.","190% spite damage and 68% debuff damage","258%","0.45s cast speed. 50% chance to heal 20% Max HP and buff 35% for 6s instead of attacking. Applies 50 knockback and 28 knockup on spite.","def","melee","Moody||Pastel Goth Hen||107"],["Crowd Call","Idol Hen","Calls in the crowd. Tiny fans flood the pit with things to throw.","5% per hit (minions use Sprinkle Burst at 10% power)","5% per fan hit","0.55s cast speed. Spawns 6 fan minions for 12s. Buffs own damage by 20% for 6s.","off","ranged","Crowd Call||Idol Hen||108"],["Overexposure","Deep Fried Hen","Damage comes out compressed. Sometimes it is nothing, sometimes it is everything.","Randomly ranges from 15% to 550% damage","15% to 550%","0.45s cast speed. Jackpot damage (550%) occurs at 85% threshold. Applies 46 knockback and 26 knockup.","off","ranged","Overexposure||Deep Fried Hen||109"],["Titan Mode","Founder Rooster","Transforms into a TITAN and rampages for a few seconds.","160% stomp damage, 220% swipe damage, and 300% bite damage","680%","0.5s cast speed. Scales size by 2.4x. Applies 46 knockback/30 knockup on stomp, 60 knockback/20 knockup on swipe, and 70 knockback/40 knockup on bite.","off","melee","Titan Mode||Founder Rooster||110"],["Toro Bravo","Bravo Rooster","Glows red, charges the lane, and launches everyone skyward.","55% damage per gore (5 gores, 275% total) and 150% final damage","425%","0.6s cast speed. Scales size by 1.2x. Charges forward. Applies 44 knockback/34 knockup per gore, and 72 knockback/56 knockup on final hit.","off","melee","Toro Bravo||Bravo Rooster||111"],["Overdrive","Blitz Rooster","Blurs out and hits everyone, everywhere, before the first one drops.","28% damage per pass (8 passes, 224% total) and 160% final damage","384%","0.45s cast speed. Applies 6 knockback per pass, 52 knockback and 30 knockup on final hit.","off","melee","Overdrive||Blitz Rooster||112"],["Smokescreen","Agent Cluck","Pulls everyone into the smoke, then nothing misses. The tie stays perfect.","10% damage per pull (3 pulls, 30% total), 55% damage per shot (5 shots, 275% total), and 160% final damage","465%","0.4s cast speed. Pulls enemies into a gather point. Applies 38 knockback per pull, 6 knockback per shot, 40 knockback and 24 knockup on final hit.","ctrl","ranged","Smokescreen||Agent Cluck||113"],["Spotlight","Glam Hen","Strikes a pose and every head turns. That spotlight is not the warm kind.","70% damage per burn (3 burns, 210% total) and 160% final damage","370%","0.6s cast speed. Taunts enemies for 3.5s. Applies 26 knockback per burn and 34 knockup on final.","ctrl","ranged","Spotlight||Glam Hen||114"],["Toro Bravo","Ironcluck","Slow, heavy and entirely uninterested in your plans for the round.","55% damage per gore (5 gores, 275% total) and 150% final damage","425%","0.6s cast speed. Scales size by 1.2x. Charges forward. Applies 44 knockback/34 knockup per gore, and 72 knockback/56 knockup on final hit.","off","melee","Toro Bravo||Ironcluck||115"],["Prize Pop","Prize Rooster","Fires a glowing prize spark at the target. The spark bounces once, then pops into a confetti burst.","160% spark + 55% bounce + 55% burst","270%","0.35s cast speed. 7-unit burst radius. Applies 18 knockback spark, 12 knockback bounce, 36 knockback and 24 knockup on burst.","off","ranged","Prize Pop||Prize Rooster||116"],["Missing Piece","Puzzle Hen","Spins glowing puzzle pieces around the target, snaps them shut, and keeps one piece back as a shield.","32% per piece (5 pieces, 160% total) and 235% burst","395%","0.35s cast speed. 9-unit burst radius. Applies 34 knockback and 18 knockup. Grants an 18% shield for 4s.","def","ranged","Missing Piece||Puzzle Hen||117"],["Safe Light","Beacon Rooster","Drops a golden beacon underfoot. The next hit taken inside it is cut down before the light fades.","No direct damage","0%","0.3s cast speed. 8-unit beacon radius. Grants a 45% Max HP shield to the weakest ally for 2.75s.","sup","melee","Safe Light||Beacon Rooster||118"],["First Strike","Duelist Rooster","Dashes at the strongest rival and slashes once, harder if the target is still healthier than it.","280% base slash damage. If the target has a higher HP percentage, it deals an additional 135% bonus damage","280% (or 415% with bonus)","0.3s cast speed. Dashes 16 units at 70 speed. Applies 30 knockback.","off","melee","First Strike||Duelist Rooster||119"],["Primal Plates","Stego Rooster","Four colourful shockwaves burst outward one by one, then a wide slash sweeps the middle.","55% per wave (4 waves, 220% total) and 180% sweep","400%","0.4s cast speed. 7-unit wave radius, 9-unit sweep radius. Applies 50 knockback and 20 knockup. Grants a 10% shield for 3s.","def","melee","Primal Plates||Stego Rooster||120"],["Holy Ground","Bulwark Knight","Plants the banner. Inside that circle, only those rules count.","60% plant damage and 22% tick damage (up to 14 ticks over 7s)","368%","0.55s cast speed. Creates a 7s zone. Applies 32 knockback and 18 knockup on plant.","off","melee","Holy Ground||Bulwark Knight||121"],["Rebirth","Phoenix Hen","Dying is a step in the process, not the end of it.","140% pyre damage","140%","0.55s cast speed. Revives with 50% HP if killed within 8s. Grants 0.9s invulnerability. Applies 44 knockback and 26 knockup.","def","melee","Rebirth||Phoenix Hen||122"],["Split Image","Twin Rooster","Becomes two. Both of them are real and both of them are angry.","80% split damage","80%","0.5s cast speed. Spawns a twin minion for 14s at 50% power. Applies 36 knockback and 20 knockup.","off","melee","Split Image||Twin Rooster||123"],["Mimicry","Chameleon Hen","Watches your special land, learns it on the spot, and hands it straight back.","62% steal damage and 150% return damage","212%","0.55s cast speed. Steals buffs for 6s and gains 140% of them. Applies 42 knockback and 24 knockup on return.","util","melee","Mimicry||Chameleon Hen||124"],["Lockout","Hacker Hen","Nobody's special works for a while. No explanation given.","No direct damage","0%","0.6s cast speed. Silences enemies for 3.5s.","ctrl","ranged","Lockout||Hacker Hen||125"],["Possess","Ghost Hen","Takes the wheel for a while. You get it back eventually.","180% exit damage","180%","0.5s cast speed. Possesses enemy for 3s and marks them for 3.5s. Applies 40 knockback and 24 knockup on exit.","ctrl","ranged","Possess||Ghost Hen||126"],["Invisible Wall","Mime Hen","There is nothing there. You will not be getting past it.","50% damage per push (3 pushes, 150% total)","150%","0.5s cast speed. Stuns for 0.35s. Applies 86 knockback and 20 knockup per push.","ctrl","ranged","Invisible Wall||Mime Hen||127"],["Vent","Impostor Chick","Looks exactly like one of yours until the moment it very much does not.","280% stab damage","280%","0.2s cast speed. Vanishes for 1s. Stuns for 0.5s. Applies 44 knockback and 22 knockup on stab.","ctrl","melee","Vent||Impostor Chick||128"],["Titan Mode","Talon Titan","Grows when the fight stops going its way. It usually stops going its way on purpose.","160% stomp damage, 220% swipe damage, and 300% bite damage","680%","0.5s cast speed. Scales size by 2.4x. Applies 46 knockback/30 knockup on stomp, 60 knockback/20 knockup on swipe, and 70 knockback/40 knockup on bite.","off","melee","Titan Mode||Talon Titan||129"],["ZA WARUDO","Baron Cluck","Stops time, beats you senseless, and the damage lands at once.","30% damage per tick (10 ticks, 300% total) and 120% final damage","420%","0.4s cast speed. Stops time for 1.5s. Applies 75 knockback and 45 knockup on final hit.","off","ranged","ZA WARUDO||Baron Cluck||130"],["Venom Bite","Viper Hen","The bite is the small part. You take the rest of it home with you.","140% bite damage and 45% damage per tick (3 ticks, 135% total)","275%","0.45s cast speed. Applies a 60s poison. Applies 18 knockback on bite.","off","melee","Venom Bite||Viper Hen||131"],["Underdog Rally","Mascot Rooster","Sprints a bright lap around the target trailing confetti, then finishes with a trophy slam.","45% per lap tick (4 ticks, 180% total) and 285% slam","465%","0.3s cast speed. 5-unit lap radius, 6-unit slam radius. Applies 12 knockback lap, 48 knockback and 24 knockup slam. +18% ATK buff for 4s.","sup","melee","Underdog Rally||Mascot Rooster||132"],["Victory Waves","Torchbearer Hen","Two flame waves roll out and leave whatever they touch burning.","125% per wave (2 waves, 250% total) plus 15% burn damage per tick (3 ticks, 45% total)","295%","0.35s cast speed. Waves strike in an 8-unit radius every 0.3s, applying 24 knockback. Applies a 3-second burn effect that ticks every 1 second.","off","ranged","Victory Waves||Torchbearer Hen||133"],["Jurassic Surge","Jurassic Chicken","Teal rings drag rivals inward for four fin slashes and one spine-shaped burst.","60% per slash (4 slashes, 240% total) and 220% burst","460%","0.4s cast speed. 7-unit slash radius, 8-unit burst radius. Pulls enemies (-34 knockback). Applies 48 knockback and 30 knockup. Slows enemies by 30% for 0.5s.","ctrl","melee","Jurassic Surge||Jurassic Chicken||134"],["Ancient Discovery","Explorer Hen","Lights amber trails under nearby rivals, then runs a wide beam the length of them.","50% per burst (4 bursts, 200% total) and 320% ray","520%","0.4s cast speed. 6-unit burst radius, 10-unit ray radius. Applies 54 knockback and 26 knockup.\n","off","melee","Ancient Discovery||Explorer Hen||135"],["Northern Lights","Aurora Hen","Draws a curtain of light. Allies mend; enemies cannot see.","68% debuff damage","68%","0.6s cast speed. Heals allies for 10% Max HP. Debuffs enemies by 32% for 5s.","sup","ranged","Northern Lights||Aurora Hen||136"],["Foxfire","Nine-Tail Hen","Nine tails, nine lights, and none of them miss.","42% damage per light (9 lights, 378% total) and 220% final damage","598%","0.55s cast speed. Applies 6 knockback per light, 54 knockback and 34 knockup on final.","off","ranged","Foxfire||Nine-Tail Hen||137"],["Voodoo","Doll Hen","Whatever lands on the doll lands on you. The doll is fine with that.","50% damage per pin (5 pins, 250% total)","250%.\nReflect & Shield: Reflects 120% of damage taken back to the linked enemy and grants a 30% Max HP shield","0.4s cast speed. Links for 7s. Applies 6 knockback per pin.","ctrl","ranged","Voodoo||Doll Hen||138"],["Star Sign","Zodiac Hen","Draws a different sign every fight. None of them are good news for you.","240% fire damage, 20% air damage, and 20% tick damage (12 ticks over 6s)","500%","0.55s cast speed. Slows by 40%, debuffs by 30%, and stuns for 0.5s. Creates 6s zone. Applies 54 knockback/30 knockup on fire, 20 knockback/60 knockup on air.","ctrl","ranged","Star Sign||Zodiac Hen||139"],["Halo Bloom","Halo Hen","Creates a glowing halo under the target. The ring expands outward, pulls back inward, then bursts with light.","30% per pull (3 pulls, 90% total) and 235% burst damage","325%","0.45s cast speed. 10-unit radius. 18 knockback per pull. Final burst applies 46 knockback and 30 knockup.","ctrl","ranged","Halo Bloom||Halo Hen||140"],["Cleanse Feather","Mercy Hen","A glowing feather circles the lowest ally once and heals them in a burst of gold sparkles.","No direct damage","0%","0.35s cast speed. 28-unit ally radius. Heals lowest HP ally by 5% Max HP. 10s cooldown.","sup","ranged","Cleanse Feather||Mercy Hen||141"],["Dark Bargain","Pact Hen","Hands out a dark contract for a short attack boost, then closes it with a slash at the target.","275% slash damage","275%","0.35s cast speed. 12-unit ally radius. +32% ATK buff for 3.5s. Applies 40 knockback and 16 knockup.\n","sup","ranged","Dark Bargain||Pact Hen||142"],["Refraction","Prism Rooster","Splits the blow into three colours and sends each one somewhere different.","85% beam damage and 60% step bonus damage","145%","0.6s cast speed. Applies 34 knockback per beam and 40 knockup on final.","off","ranged","Refraction||Prism Rooster||143"],["Cycle of Ash","Radiant Fenghuang","Burns the field down and makes it bloom in the same breath.","150% burn damage","150%","0.65s cast speed. Heals 18% Max HP instantly and 4% per tick, buffs damage by 30% for 6s. Creates 6s zone. Applies 40 knockback and 24 knockup on burn.","sup","ranged","Cycle of Ash||Radiant Fenghuang||144"],["Facet","Crystal Hen","Shatters into sharp shards that keep fighting, then reforms.","80% damage per shard (4 shards, 320% total)","320%","0.25s cast speed. Heals 18% Max HP over the duration. Applies 32 knockback and 18 knockup per shard.","def","melee","Facet||Crystal Hen||145"],["False Future","Oracle Chick","Places three future markers around the target. Two fade away, and the real marker flashes before striking.","400% strike damage","400%","0.3s cast speed. 8-unit radius. Applies 72 knockback and 42 knockup.\n","off","ranged","False Future||Oracle Chick||146"],["Stardust","Nebula Hen","Fills the air with something old and slow. Everyone in it gets slow too.","20% dust damage and 12% tick damage (11 ticks over 7s)","152%","0.7s cast speed. Creates 7s zone. Slows by 45% and debuffs by 30% for 6s. Applies 6 knockback.","ctrl","ranged","Stardust||Nebula Hen||147"],["Heavenfall Choir","Seraph Rooster","Calls down several thin beams of light around the target, followed by one larger beam in the center.","65% per beam (3 beams, 195% total) and 445% final beam damage","640%","0.6s cast speed. 7-unit radius for beams, 11-unit radius for final. Applies 14 knockback/8 knockup per beam, 64 knockback/50 knockup on final.","off","ranged","Heavenfall Choir||Seraph Rooster||148"],["Ascendant Core","Sovereign Rooster","Summons a golden core above the strongest nearby enemy. The core charges briefly, then fires a blast downward.","55% per spark (3 sparks, 165% total) and 385% blast damage","550%","0.29s cast speed. 6-unit radius sparks, 10-unit radius blast. Applies 8 knockback per spark, 66 knockback and 44 knockup on blast.","off","ranged","Ascendant Core||Sovereign Rooster||149"],["Final Grace","Angel Chicken","A halo forms overhead, healing and shielding, then bursts outward at everything nearby.","460% burst","460%","0.4s cast speed. Heals 10%, 10% shield for 4s. 12-unit burst radius. Applies 44 knockback and 22 knockup. 10s cooldown.","sup","ranged","Final Grace||Angel Chicken||150"],["Devil's Due","Devil Chicken","Burns a contract onto the target. It ticks away before ending in a red explosion.","72% per tick (5 ticks, 360% total) and 590% burst","950%","0.4s cast speed. 10-unit burst radius. Applies 56 knockback and 28 knockup.","off","ranged","Devil's Due||Devil Chicken||151"],["Tyrant's Roar","Rex Rooster","Roars up three red shockwave rings, then charges in behind a pair of enormous glowing jaws.","45% per roar (3 roars, 135% total) and 600% bite","735%","0.5s cast speed. 10-unit roar radius, 7-unit bite radius. Applies 70 knockback and 44 knockup.","off","melee","Tyrant's Roar||Rex Rooster||152"],["Eruption Waves","Magma Chicken","Cracks the ground into three eruptions, then one that dwarfs them.","75% per wave (3 waves, 225% total) and 420% final","645%","0.5s cast speed. 7-unit wave radius, 11-unit final radius. Applies 20 knockback per wave, 55 knockback and 40 knockup on final.","off","ranged","Eruption Waves||Magma Chicken||153"],["Seventy-Two Strikes","Stone King","Calls up six golden cloud copies to strike at once, then brings them together as one staff.","60% per clone strike (6 clones, 360% total) and 450% blast","810%","0.5s cast speed. 7-unit clone radius, 11-unit blast radius. Applies 68 knockback and 42 knockup. Stuns for 0.6s.","ctrl","melee","Seventy-Two Strikes||Stone King||154"],["Hold the Line","Bulwark Hen","Stomps a wide line forward that pushes back and slows everything it catches.","220% line damage","220%","0.45s cast speed. 14-unit long line. Applies 40 knockback and 18 knockup. Slows enemies by 30% for 3 seconds.","ctrl","melee","Hold the Line||Bulwark Hen||155"],["Bad Deal","High Roller Rooster","Throws two glowing cards. Each one flips, strikes, and leaves a small burst behind.","155% per card (2 cards, 310% total) and 55% burst","365%","0.3s cast speed. 6-unit burst radius. Applies 20 knockback per card, 24 knockback and 10 knockup on burst.","off","ranged","Bad Deal||High Roller Rooster||156"],["Not Found","404 Chick","Stops existing for a few seconds. You cannot hit a 404.","160% return damage","160%","0.2s cast speed. Vanishes for 1.2s, spawning 2 error minions at 30% power. Silences for 2.5s. Applies 46 knockback and 26 knockup on return.","ctrl","melee","Not Found||404 Chick||157"],["ZA WARUDO","Golden Goose","Stops time, beats you senseless, and the damage lands at once.","30% damage per tick (10 ticks, 300% total) and 120% final damage","420%","0.4s cast speed. Stops time for 1.5s. Applies 75 knockback and 45 knockup on final hit.","off","ranged","ZA WARUDO||Golden Goose||158"],["Stormcall","Storm Colossus","Four to soften the yard, and one more to end the conversation.","135% damage per bolt (4 bolts, 540% total) and 220% final damage","760%","0.6s cast speed. Applies 36 knockback and 30 knockup per bolt and on final hit.","off","melee","Stormcall||Storm Colossus||159"],["Black Sun Cataclysm","Eclipse Hen","Darkens the arena as a black sun forms above the target, then detonates into a large shadow shockwave.","70% per tick (5 ticks, 350% total) and 690% burst damage","1040%","0.48s cast speed. 10-unit tick radius. 15-unit burst radius. Applies 12 knockback and 6 knockup per tick. Final burst applies 80 knockback and 60 knockup.","off","ranged","Black Sun Cataclysm||Eclipse Hen||160"],["Reaction Ring","Catalyst Hen","Creates an unstable energy ring under the target. The ring shrinks inward, pulses several times, then explodes.","80% per pulse (4 pulses, 320% total) and 600% blast damage","920%","0.54s cast speed. 12-unit ring shrinks by 0.18 per pulse. Applies 14 knockback per pulse. Final blast applies 72 knockback and 46 knockup.","off","ranged","Reaction Ring||Catalyst Hen||161"],["Abyssal Surge","Kraken Chicken","Creates dark water under the target. The water pulls inward in waves before erupting in an abyssal burst.","70% per wave (3 waves, 210% total) and 690% burst","900%","1.0s cast speed. 13-unit radius. Pulls enemies with 16 knockback per wave. Final burst applies 76 knockback and 54 knockup.","ctrl","ranged","Abyssal Surge||Kraken Chicken||162"],["Grandmaster Order","Grandmaster Rooster","Marks the strongest rival, then ends them with one command slash.","520% final slash","520%","0.4s cast speed. 16-unit mark radius, 8s duration. Grants entire team +15% Ability Boost. Applies 60 knockback and 40 knockup.","sup","melee","Grandmaster Order||Grandmaster Rooster||163"],["Extinction","Primeval Chicken","Darkens the yard and drops four amber meteors around the rival before the whole area erupts.","65% per meteor (4 meteors, 260% total) and 630% blast","890%","0.55s cast speed. 7-unit meteor radius, 12-unit blast radius. Applies 74 knockback and 48 knockup. Slows enemies by 40% for 2s.","ctrl","melee","Extinction||Primeval Chicken||164"],["King of the Cretaceous","T-Rex Chicken","A roar that shakes the whole yard, three tremors, and jaws that close on the strongest rival.","140% roar + 75% per tremor (3 tremors, 225% total) + 690% bite","1055%","0.55s cast speed. 13-unit roar radius, 7-unit bite radius. Applies 76 knockback and 46 knockup. Stuns for 0.5s.","ctrl","melee","King of the Cretaceous||T-Rex Chicken||165"],["Royal Flush","Ace Rooster","Five oversized cards circle the target, tighten inward, and slash one at a time before the ace lands.","82% per card (5 cards, 410% total) and 575% final blast","985%","0.45s cast speed. 10-unit circle radius, 8-unit blast radius. Applies 62 knockback and 34 knockup.","off","ranged","Royal Flush||Ace Rooster||166"]];
-
-const PAGE_SIZE = 8;
+// App State
+let filteredData = [...rawChickenData];
+let selectedTeam = []; // Max 3 slots, the same chicken can be added more than once
 let currentPage = 1;
+const pageSize = 16;
+let currentRole = "All";
+let currentType = "All";
 
-const roleChipsEl = document.getElementById('roleChips');
-roleChipsEl.appendChild(mkChip('role', 'all', 'All Roles', null));
-Object.keys(ROLES).forEach(k => roleChipsEl.appendChild(mkChip('role', k, ROLES[k].label, ROLES[k])));
-
-const typeChipsEl = document.getElementById('typeChips');
-typeChipsEl.appendChild(mkChip('type', 'all', 'All Types', null));
-typeChipsEl.appendChild(mkChip('type', 'melee', '⚔️ Melee', null));
-typeChipsEl.appendChild(mkChip('type', 'ranged', '🎯 Ranged', null));
-
-function mkChip(group, key, label, role) {
-  const b = document.createElement('button');
-  b.textContent = label;
-  b.dataset.group = group;
-  b.dataset.key = key;
-  b.className = 'chip-btn';
-  if (role) b.style.color = role.text;
-  b.onclick = (e) => { 
-    if (group==='role') activeRole = key; else activeType = key; 
-    currentPage = 1;
-    spawnBurst(e.clientX, e.clientY, '#00f0ff');
-    render(); 
-  };
-  return b;
-}
-
-let activeRole = 'all';
-let activeType = 'all';
-
-window.addEventListener('mousemove', (e) => {
-  document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
-  document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+// Initialization
+document.addEventListener("DOMContentLoaded", () => {
+  filterData();
+  updateTeamDock();
+  const list = document.getElementById("chickenList");
+  [...rawChickenData].sort((a, b) => a.name.localeCompare(b.name)).forEach(c => {
+    const o = document.createElement("option");
+    o.value = c.name;
+    list.appendChild(o);
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") { closeComparison(); closeDuel(); }
+  });
 });
 
-window.addEventListener('keydown', (e) => {
-  if (document.activeElement && document.activeElement.id === 'q') return;
-  if (e.key === 'ArrowRight') goToPage(currentPage + 1);
-  if (e.key === 'ArrowLeft') goToPage(currentPage - 1);
-});
+// Filtering & Sorting Logic
+function filterData() {
+  const query = document.getElementById("searchInput").value.toLowerCase().trim();
+  const sortOption = document.getElementById("sortSelect").value;
 
-const canvas = document.getElementById('particle-canvas');
-const ctx = canvas.getContext('2d');
-let particles = [];
+  filteredData = rawChickenData.filter(chicken => {
+    const matchesRole = currentRole === "All" || chicken.role === currentRole;
+    const matchesType = currentType === "All" || chicken.type === currentType;
+    const matchesQuery = !query || 
+      chicken.name.toLowerCase().includes(query) ||
+      chicken.ability.toLowerCase().includes(query) ||
+      chicken.role.toLowerCase().includes(query) ||
+      chicken.type.toLowerCase().includes(query) ||
+      chicken.desc.toLowerCase().includes(query) ||
+      chicken.effects.toLowerCase().includes(query);
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-// Feathers, not sparks — every burst in this codex is a little tuft of
-// plumage rather than a generic particle, tumbling and drifting down like
-// something a chicken actually left behind.
-function spawnBurst(x, y, color = '#00f0ff', count = 16) {
-  for (let i = 0; i < count; i++) {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = Math.random() * 4 + 1.5;
-    particles.push({
-      x, y,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed - 1,
-      life: 1,
-      decay: Math.random() * 0.018 + 0.012,
-      size: Math.random() * 4 + 4,
-      rot: Math.random() * Math.PI * 2,
-      vrot: (Math.random() - 0.5) * 0.3,
-      color
-    });
-  }
-}
-
-function renderParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach((p, i) => {
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vy += 0.045;        // gentle gravity so feathers arc and fall
-    p.vx *= 0.985;        // air drag
-    p.rot += p.vrot;
-    p.life -= p.decay;
-    if (p.life <= 0) {
-      particles.splice(i, 1);
-    } else {
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rot);
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = p.life;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, p.size * 0.42, p.size * 1.15, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-  });
-  requestAnimationFrame(renderParticles);
-}
-renderParticles();
-
-function getPageList(current, total) {
-  if (total <= 7) return Array.from({length: total}, (_, i) => i + 1);
-  let start, end;
-  if (current <= 4) { start = 1; end = 5; }
-  else if (current >= total - 3) { start = total - 4; end = total; }
-  else { start = current - 2; end = current + 2; }
-  const pages = [];
-  for (let i = start; i <= end; i++) pages.push(i);
-  const result = [];
-  if (pages[0] > 1) {
-    result.push(1);
-    if (pages[0] > 2) result.push('...');
-  }
-  result.push(...pages);
-  if (pages[pages.length - 1] < total) {
-    if (pages[pages.length - 1] < total - 1) result.push('...');
-    result.push(total);
-  }
-  return result;
-}
-
-function renderPaginationInto(container, current, total) {
-  if (!container) return;
-  container.innerHTML = '';
-  const prevBtn = document.createElement('button');
-  prevBtn.className = 'page-nav-btn';
-  prevBtn.textContent = '◀ Prev';
-  prevBtn.disabled = current === 1;
-  prevBtn.onclick = () => goToPage(current - 1);
-  container.appendChild(prevBtn);
-
-  getPageList(current, total).forEach(p => {
-    if (p === '...') {
-      const span = document.createElement('span');
-      span.className = 'page-ellipsis';
-      span.textContent = '...';
-      container.appendChild(span);
-    } else {
-      const btn = document.createElement('button');
-      btn.className = 'page-btn' + (p === current ? ' active' : '');
-      btn.textContent = p;
-      btn.onclick = () => goToPage(p);
-      container.appendChild(btn);
-    }
+    return matchesRole && matchesType && matchesQuery;
   });
 
-  const nextBtn = document.createElement('button');
-  nextBtn.className = 'page-nav-btn';
-  nextBtn.textContent = 'Next ▶';
-  nextBtn.disabled = current === total;
-  nextBtn.onclick = () => goToPage(current + 1);
-  container.appendChild(nextBtn);
-}
+  // Sorting
+  if (sortOption === "name") {
+    filteredData.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortOption === "hp") {
+    filteredData.sort((a, b) => (b.hp ?? -1) - (a.hp ?? -1));
+  } else if (sortOption === "atk") {
+    filteredData.sort((a, b) => (b.atk ?? -1) - (a.atk ?? -1));
+  }
 
-function goToPage(n) {
-  currentPage = n;
+  currentPage = 1;
   render();
-  const anchor = document.getElementById('gridTop');
-  if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+function setRole(role, btn) {
+  currentRole = role;
+  document.querySelectorAll("#roleFilterGroup .btn-filter").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  filterData();
+}
+
+function setType(type, btn) {
+  currentType = type;
+  document.querySelectorAll("#typeFilterGroup .btn-filter").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  filterData();
+}
+
+// Building Team Logic (Max 3 slots - duplicates allowed, e.g. 3x Eclipse)
+function teamCount(name) {
+  return selectedTeam.filter(c => c.name === name).length;
+}
+
+function addToTeam(idx) {
+  if (selectedTeam.length >= 3) {
+    alert("Building Team is full! You can only have up to 3 chickens (the same chicken can be used more than once).");
+    return;
+  }
+  const chicken = rawChickenData[idx];
+  if (chicken) selectedTeam.push(chicken);
+  updateTeamDock();
+  renderGrid();
+}
+
+function removeOneFromTeam(idx) {
+  const name = rawChickenData[idx].name;
+  for (let i = selectedTeam.length - 1; i >= 0; i--) {
+    if (selectedTeam[i].name === name) { selectedTeam.splice(i, 1); break; }
+  }
+  updateTeamDock();
+  renderGrid();
+}
+
+function removeSlot(slotIndex) {
+  selectedTeam.splice(slotIndex, 1);
+  updateTeamDock();
+  renderGrid();
+}
+
+function clearTeam() {
+  selectedTeam = [];
+  updateTeamDock();
+  renderGrid();
+}
+
+function updateTeamDock() {
+  const slotsContainer = document.getElementById("teamSlots");
+  const compareBtn = document.getElementById("compareBtn");
+
+  slotsContainer.innerHTML = "";
+  for (let i = 0; i < 3; i++) {
+    const chicken = selectedTeam[i];
+    const slotDiv = document.createElement("div");
+    if (chicken) {
+      slotDiv.className = "team-slot filled";
+      slotDiv.innerHTML = `
+        <span>${chicken.name}</span>
+        <button class="slot-remove" onclick="removeSlot(${i})">✕</button>
+      `;
+    } else {
+      slotDiv.className = "team-slot";
+      slotDiv.textContent = `Slot ${i + 1}: Empty`;
+    }
+    slotsContainer.appendChild(slotDiv);
+  }
+
+  compareBtn.disabled = selectedTeam.length === 0;
+}
+
+// Render Core
 function render() {
-  const q = document.getElementById('q').value.trim().toLowerCase();
-  
-  [...roleChipsEl.children].forEach(c => {
-    const isSelected = c.dataset.key === activeRole;
-    c.style.background = isSelected ? 'rgba(0, 240, 255, 0.2)' : 'rgba(255, 255, 255, 0.03)';
-    c.style.borderColor = isSelected ? 'var(--neon-cyan)' : 'rgba(255, 255, 255, 0.08)';
-    c.style.boxShadow = isSelected ? '0 0 15px var(--neon-glow)' : 'none';
-    c.style.color = isSelected ? '#fff' : (c.dataset.key !== 'all' ? ROLES[c.dataset.key]?.text : 'var(--text-secondary)');
-  });
-  
-  [...typeChipsEl.children].forEach(c => {
-    const isSelected = c.dataset.key === activeType;
-    c.style.background = isSelected ? 'rgba(0, 240, 255, 0.2)' : 'rgba(255, 255, 255, 0.03)';
-    c.style.borderColor = isSelected ? 'var(--neon-cyan)' : 'rgba(255, 255, 255, 0.08)';
-    c.style.boxShadow = isSelected ? '0 0 15px var(--neon-glow)' : 'none';
-    c.style.color = isSelected ? '#fff' : 'var(--text-secondary)';
-  });
+  renderGrid();
+  renderPagination();
+}
 
-  const filtered = DATA.filter(a => {
-    const roleOk = activeRole === 'all' || a[6] === activeRole;
-    const typeOk = activeType === 'all' || a[7] === activeType;
-    const textOk = !q || a[0].toLowerCase().includes(q) || a[1].toLowerCase().includes(q) || a[2].toLowerCase().includes(q) || a[3].toLowerCase().includes(q) || a[5].toLowerCase().includes(q);
-    return roleOk && typeOk && textOk;
-  });
+function renderGrid() {
+  const grid = document.getElementById("gridContainer");
+  grid.innerHTML = "";
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  currentPage = Math.min(Math.max(1, currentPage), totalPages);
-  const pageItems = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const countDisplay = document.getElementById("countDisplay");
+  const total = filteredData.length;
 
-  document.getElementById('count').textContent = `// VISIBLE: ${filtered.length} / ${DATA.length} ABILITIES`;
-  renderPaginationInto(document.getElementById('paginationTop'), currentPage, totalPages);
-  renderPaginationInto(document.getElementById('paginationBottom'), currentPage, totalPages);
+  if (total === 0) {
+    countDisplay.textContent = "Showing 0 Chickens";
+    grid.innerHTML = `<div style="color: #FFF; font-family: 'Fredoka'; font-size: 1.2rem; grid-column: 1/-1; text-align: center; padding: 3rem 0;">No chickens found matching criteria.</div>`;
+    return;
+  }
 
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '';
-  
-  pageItems.forEach((a, idx) => {
-    const [name, sub, desc, breakdown, td, fx, cat, type] = a;
-    const role = ROLES[cat];
-    const card = document.createElement('div');
-    card.className = 'ability-card';
-    card.dataset.key = a[8];
+  const startIdx = (currentPage - 1) * pageSize;
+  const endIdx = Math.min(startIdx + pageSize, total);
+  countDisplay.textContent = `Showing ${startIdx + 1}–${endIdx} of ${total} Chickens`;
+
+  const pageData = filteredData.slice(startIdx, endIdx);
+
+  pageData.forEach(chicken => {
+    const idx = rawChickenData.indexOf(chicken);
+    const count = teamCount(chicken.name);
+    const isSelected = count > 0;
+    const card = document.createElement("div");
+    card.className = `card ${isSelected ? 'selected-in-team' : ''}`;
+    card.setAttribute("data-role", chicken.role);
+
     card.innerHTML = `
       <div>
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
-          <div>
-            <div class="card-title">${name}</div>
-            <div class="card-subtitle">${sub} · <span class="type-indicator" style="color:${type==='melee'?'#ff0055':'#00f0ff'}">${type === 'melee' ? '⚔️ Melee' : '🎯 Ranged'}</span></div>
+        <div class="card-header">
+          <div class="card-title">${chicken.name}</div>
+        </div>
+        <div class="badges-row">
+          <span class="badge-role role-${chicken.role}">${chicken.role}</span>
+          <span class="badge-type">${chicken.type}</span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-pill stat-hp">💚 HP: ${fmtX(chicken.hp)}</div>
+          <div class="stat-pill stat-atk">⚔️ ATK: ${fmtX(chicken.atk)}</div>
+        </div>
+        <div class="ability-box">
+          <div class="ability-header">
+            <span class="ability-name">${chicken.ability}</span>
+            <span class="badge-final-dmg">Final: ${chicken.finalDmg}</span>
           </div>
-          <span class="badge-role" style="background:${role.bg};color:${role.text};border:1px solid ${role.border};">${role.label}</span>
+          <div class="desc-text">"${chicken.desc}"</div>
+          <div class="dmg-info"><strong>Damage:</strong> ${chicken.dmg}</div>
+          <div class="effects-text"><strong>Effects & Stats:</strong> ${chicken.effects}</div>
         </div>
-        <p class="card-desc">${desc}</p>
-        ${breakdown ? `<p class="card-breakdown">${breakdown}</p>` : ''}
       </div>
-      <div>
-        <div style="margin-bottom:12px;">
-          <span class="stat-tag">⚡ DMG: ${td}</span>
-        </div>
-        <p class="card-effects">${fx}</p>
+      <div class="card-actions">
+        <button class="btn-add-team ${isSelected ? 'in-team' : ''}" onclick="addToTeam(${idx})">
+          ${isSelected ? `+ Add Another <span class="team-count-badge">×${count} in Team</span>` : '+ Add to Team'}
+        </button>
+        ${isSelected ? `<button class="btn-remove-one" title="Remove one" onclick="removeOneFromTeam(${idx})">−</button>` : ''}
       </div>
     `;
-
-    card.addEventListener('click', (e) => {
-      e.preventDefault();
-      addToComparison(a);
-      spawnBurst(e.clientX, e.clientY, '#ffb020', 12);
-    });
-
-    card.classList.add('card-enter');
-    card.style.animationDelay = (idx * 0.04) + 's';
-    card.addEventListener('animationend', () => {
-      card.classList.remove('card-enter');
-      card.style.animationDelay = '';
-    }, { once: true });
 
     grid.appendChild(card);
   });
 }
 
-const compareDrawer = document.getElementById('compareDrawer');
-const compareSlots = document.getElementById('compareSlots');
-const compareContent = document.getElementById('compareContent');
-const compareFloat = document.getElementById('compareFloat');
-const compareCount = document.getElementById('compareCount');
-const compareClose = document.getElementById('compareClose');
-const compareToast = document.getElementById('compareToast');
-let compareItems = [];
+function renderPagination() {
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  const topPagination = document.getElementById("paginationTop");
+  const bottomPagination = document.getElementById("paginationBottom");
 
-function showCompareToast(message) {
-  compareToast.textContent = message;
-  compareToast.classList.add('show');
-  clearTimeout(showCompareToast.timer);
-  showCompareToast.timer = setTimeout(() => compareToast.classList.remove('show'), 1800);
-}
-
-function addToComparison(a) {
-  const existing = compareItems.findIndex(x => x[8] === a[8]);
-  if (existing !== -1) {
-    compareItems.splice(existing, 1);
-    showCompareToast(`${a[0]} · ${a[1]} removed from comparison.`);
-  } else if (compareItems.length >= 2) {
-    showCompareToast('Comparison is full — remove an ability first.');
-    openComparison();
+  if (totalPages <= 1) {
+    topPagination.innerHTML = "";
+    bottomPagination.innerHTML = "";
     return;
-  } else {
-    compareItems.push(a);
-    showCompareToast(`${a[0]} · ${a[1]} added to comparison.`);
   }
-  updateComparison();
-  render();
-  if (compareItems.length > 0) openComparison();
-}
 
-function removeComparison(index) {
-  if (index >= 0 && index < compareItems.length) {
-    const removed = `${compareItems[index][0]} · ${compareItems[index][1]}`;
-    compareItems.splice(index, 1);
-    showCompareToast(`${removed} removed.`);
-    updateComparison();
-    render();
-  }
-}
-
-function openComparison() {
-  compareDrawer.classList.add('open');
-  compareDrawer.setAttribute('aria-hidden', 'false');
-}
-function closeComparison() {
-  compareDrawer.classList.remove('open');
-  compareDrawer.setAttribute('aria-hidden', 'true');
-}
-
-function updateComparison() {
-  compareCount.textContent = compareItems.length;
-  compareFloat.classList.toggle('has-items', compareItems.length > 0);
-
-  compareSlots.innerHTML = '';
-  for (let i = 0; i < 2; i++) {
-    const slot = document.createElement('div');
-    slot.className = 'compare-slot' + (compareItems[i] ? ' filled' : '');
-    if (compareItems[i]) {
-      const a = compareItems[i];
-      slot.innerHTML = `<div class="slot-label">ABILITY ${i + 1}</div><div class="slot-name">${a[0]}</div><div class="slot-chicken">${a[1]} · ${a[7] === 'melee' ? '⚔️ Melee' : '🎯 Ranged'}</div><button class="slot-remove" type="button" aria-label="Remove ability ${i+1}">×</button>`;
-      slot.querySelector('.slot-remove').onclick = () => removeComparison(i);
-    } else {
-      slot.innerHTML = `<div class="slot-label">ABILITY ${i + 1}</div><div class="slot-name" style="color:#475569;font-family:inherit;font-size:11px;font-weight:500;">Click a card to add</div>`;
+  let html = `<button class="btn-page" onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+  
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+      html += `<button class="btn-page ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+    } else if (i === currentPage - 3 || i === currentPage + 3) {
+      html += `<span style="color:#FFF;">...</span>`;
     }
-    compareSlots.appendChild(slot);
   }
 
-  if (compareItems.length < 2) {
-    compareContent.innerHTML = '<div class="compare-empty">Select a second ability to unlock the side-by-side comparison.</div>';
-    return;
-  }
+  html += `<button class="btn-page" onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
 
-  const rows = [
-    ['CHICKEN', compareItems[0][1], compareItems[1][1]],
-    ['TYPE', compareItems[0][7] === 'melee' ? '⚔️ Melee' : '🎯 Ranged', compareItems[1][7] === 'melee' ? '⚔️ Melee' : '🎯 Ranged'],
-    ['ROLE', ROLES[compareItems[0][6]].label, ROLES[compareItems[1][6]].label],
-    ['DAMAGE', compareItems[0][4], compareItems[1][4]],
-    ['DAMAGE BREAKDOWN', compareItems[0][3] || '—', compareItems[1][3] || '—'],
-    ['DESCRIPTION', compareItems[0][2], compareItems[1][2]],
-    ['EFFECTS', compareItems[0][5], compareItems[1][5]]
-  ];
-  compareContent.innerHTML = `<table class="compare-table"><thead><tr><th></th><th class="ability-col">${compareItems[0][0]}</th><th class="ability-col">${compareItems[1][0]}</th></tr></thead><tbody>${rows.map(r => `<tr><th>${r[0]}</th><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table>`;
-
-  document.querySelectorAll('.ability-card').forEach(card => {
-    card.classList.toggle('compare-selected', compareItems.some(a => a[8] === card.dataset.key));
-  });
+  topPagination.innerHTML = html;
+  bottomPagination.innerHTML = html;
 }
 
-compareFloat.onclick = () => compareDrawer.classList.contains('open') ? closeComparison() : openComparison();
-compareClose.onclick = closeComparison;
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeComparison(); });
+function goToPage(page) {
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  if (page >= 1 && page <= totalPages) {
+    currentPage = page;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
 
-document.getElementById('q').addEventListener('input', () => { currentPage = 1; render(); });
-render();
+// Modal Comparison Logic
+function openComparison() {
+  if (selectedTeam.length === 0) return;
+
+  const compareGrid = document.getElementById("compareGrid");
+  compareGrid.innerHTML = "";
+
+  selectedTeam.forEach(chicken => {
+    const compareCard = document.createElement("div");
+    compareCard.className = "compare-card";
+    compareCard.innerHTML = `
+      <div class="compare-card-title">${chicken.name}</div>
+      <div class="badges-row" style="justify-content: center;">
+        <span class="badge-role role-${chicken.role}">${chicken.role}</span>
+        <span class="badge-type">${chicken.type}</span>
+      </div>
+      <div class="stats-row">
+        <div class="stat-pill stat-hp">💚 HP: ${fmtX(chicken.hp)}</div>
+        <div class="stat-pill stat-atk">⚔️ ATK: ${fmtX(chicken.atk)}</div>
+      </div>
+      <div><strong>Ability:</strong> ${chicken.ability}</div>
+      <div><strong>Final Dmg:</strong> ${chicken.finalDmg}</div>
+      <div class="dmg-info"><strong>Dmg Breakdown:</strong> ${chicken.dmg}</div>
+      <div class="effects-text"><strong>Effects:</strong> ${chicken.effects}</div>
+    `;
+    compareGrid.appendChild(compareCard);
+  });
+
+  document.getElementById("compareModal").classList.add("active");
+}
+
+function closeComparison() {
+  document.getElementById("compareModal").classList.remove("active");
+}
+
+// Compare Two Chickens
+function findChicken(name) {
+  const q = name.trim().toLowerCase();
+  if (!q) return null;
+  const exact = rawChickenData.find(c => c.name.toLowerCase() === q);
+  if (exact) return exact;
+  // Friendly fallback: "t-rex" -> "T-Rex Chicken" when only one name starts with / contains it
+  const starts = rawChickenData.filter(c => c.name.toLowerCase().startsWith(q));
+  if (starts.length === 1) return starts[0];
+  const has = rawChickenData.filter(c => c.name.toLowerCase().includes(q));
+  return has.length === 1 ? has[0] : null;
+}
+
+function openDuel() {
+  const inA = document.getElementById("duelA");
+  const inB = document.getElementById("duelB");
+  const err = document.getElementById("duelError");
+  const a = findChicken(inA.value);
+  const b = findChicken(inB.value);
+
+  inA.classList.toggle("invalid", !a);
+  inB.classList.toggle("invalid", !b);
+
+  if (!a || !b) {
+    err.textContent = "Couldn't find one of the chickens. Type a name and pick it from the list.";
+    return;
+  }
+  err.textContent = "";
+
+  const fmt = n => Math.round(n * 100) / 100;
+
+  function numRow(label, va, vb, display, unit) {
+    let clsA = "", clsB = "", noteA = "", noteB = "";
+    if (va !== null && vb !== null && va !== undefined && vb !== undefined) {
+      if (va > vb) { clsA = "win"; noteA = `+${fmt(va - vb)}${unit} higher`; }
+      else if (vb > va) { clsB = "win"; noteB = `+${fmt(vb - va)}${unit} higher`; }
+      else { clsA = clsB = "tie"; noteA = noteB = "Tie"; }
+    }
+    return `<tr><th class="stat-name">${label}</th>
+      <td class="${clsA}">${display(a)}${noteA ? `<span class="diff">${noteA}</span>` : ""}</td>
+      <td class="${clsB}">${display(b)}${noteB ? `<span class="diff">${noteB}</span>` : ""}</td></tr>`;
+  }
+
+  function textRow(label, fa, fb, cls) {
+    return `<tr><th class="stat-name">${label}</th><td class="${cls || ""}">${fa(a)}</td><td class="${cls || ""}">${fb(b)}</td></tr>`;
+  }
+
+  const badges = c => `<span class="badge-role role-${c.role}">${c.role}</span> <span class="badge-type">${c.type}</span>`;
+  const same = x => x;
+
+  const conditional = [a, b].some(c => !/^\d+(\.\d+)?%$/.test(c.finalDmg));
+  const note = conditional
+    ? `<p style="margin-top:10px;font-size:0.8rem;color:var(--text-muted);">Final Damage is compared by each chicken's maximum listed damage (conditional, random or per-hit values use their highest / listed value).</p>`
+    : "";
+
+  document.getElementById("duelBody").innerHTML = `
+    <table class="duel-table">
+      <thead><tr><th class="stat-name">Stat</th>
+        <th><div class="duel-name">${a.name}</div></th>
+        <th><div class="duel-name">${b.name}</div></th></tr></thead>
+      <tbody>
+        ${textRow("Role / Type", badges, badges)}
+        ${numRow("💚 HP Multiplier", a.hp, b.hp, c => fmtX(c.hp), "x")}
+        ${numRow("⚔️ ATK Multiplier", a.atk, b.atk, c => fmtX(c.atk), "x")}
+        ${textRow("Ability", c => `<strong>${c.ability}</strong>`, c => `<strong>${c.ability}</strong>`)}
+        ${numRow("Final Damage", a.finalNum, b.finalNum, c => c.finalDmg, "%")}
+        ${textRow("Damage Breakdown", c => c.dmg, c => c.dmg, "text-cell")}
+        ${textRow("Effects", c => c.effects, c => c.effects, "text-cell")}
+        ${textRow("Description", c => `"${c.desc}"`, c => `"${c.desc}"`, "text-cell")}
+      </tbody>
+    </table>
+    ${note}
+  `;
+
+  document.getElementById("duelModal").classList.add("active");
+}
+
+function closeDuel() {
+  document.getElementById("duelModal").classList.remove("active");
+}
 </script>
-
 </body>
 </html>
